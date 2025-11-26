@@ -187,15 +187,7 @@
       <workItem from="1763644934627" duration="255000" />
       <workItem from="1763647104502" duration="1290000" />
       <workItem from="1764066326588" duration="64000" />
-      <workItem from="1764151781264" duration="5203000" />
-    </task>
-    <task id="LOCAL-00010" summary="updated legend on the graph and ion notation">
-      <option name="closed" value="true" />
-      <created>1719849758480</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1719849758480</updated>
+      <workItem from="1764151781264" duration="5525000" />
     </task>
     <task id="LOCAL-00011" summary="updated legend on the graph and ion notation">
       <option name="closed" value="true" />
@@ -581,7 +573,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764155683504</updated>
     </task>
-    <option name="localTasksCounter" value="59" />
+    <task id="LOCAL-00059" summary="changes in design + added a new text for the pCO2 DIC plot">
+      <option name="closed" value="true" />
+      <created>1764160099248</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1764160099248</updated>
+    </task>
+    <option name="localTasksCounter" value="60" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -627,6 +627,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="changes in design + added a new text for the pCO2 DIC plot" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764155516855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764160129676" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

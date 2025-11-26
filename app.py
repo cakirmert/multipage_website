@@ -2228,7 +2228,7 @@ def update_plot(selected_ta):
         x=x,
         y=[selected_ta] * len(x),
         mode='lines',
-        name=f"TA = {selected_ta} mmol/kgw"
+        name=f"TA = {selected_ta} mmol/kg<sub>w</sub>"
     ))
 
     # add vertical line for the atmopheric partial pressure
@@ -2242,21 +2242,22 @@ def update_plot(selected_ta):
         y=[ymin, ymax],  # span full y range
         mode='lines',
         line=dict(color='black', width=2, dash='dash'),
-        name='pCO₂ = 425 ppm<br>(atmospheric<br>CO2 pressure)'
+        name='pCO<sub>2</sub> = 425 ppm<br>(atmospheric<br>CO2 pressure)'
     ))
 
     fig.update_layout(
-        height=800,
+        #height=None,  # auto height
+        height=500,
 
         # --- TITLE FONT ---
         title=dict(
-            text=f"DIC vs pCO₂ at TA = {selected_ta} mmol/kgw",
+            text=f"DIC vs pCO<sub>2</sub> at TA = {selected_ta} mmol/kg<sub>w</sub>",
             font=dict(size=28)  # title size
         ),
 
         # --- AXIS LABEL FONTS ---
-        xaxis_title="pCO₂ [ppm]",
-        yaxis_title="DIC [mmol/kgw]",
+        xaxis_title="pCO<sub>2</sub> [ppm]",
+        yaxis_title="DIC [mmol/kg<sub>w</sub>]",
 
         xaxis=dict(titlefont=dict(size=22)),
         yaxis=dict(titlefont=dict(size=22)),
