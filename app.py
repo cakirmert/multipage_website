@@ -2250,10 +2250,10 @@ def update_plot(selected_ta):
         height=500,
 
         # --- TITLE FONT ---
-        title=dict(
-            text=f"DIC vs pCO<sub>2</sub> at TA = {selected_ta} mmol/kg<sub>w</sub>",
-            font=dict(size=28)  # title size
-        ),
+        title=None,
+
+        #plot margins
+        margin=dict(t=20, b=50, l=60, r=30),
 
         # --- AXIS LABEL FONTS ---
         xaxis_title="pCO<sub>2</sub> [ppm]",
