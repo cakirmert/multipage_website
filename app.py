@@ -2095,7 +2095,7 @@ def bjerrum_layout():
                         [("Home", "/"), ("Bjerrum Plot", "/bjerrum")],
                     ),
 
-                    html.H1("Bjerrum Plot Tool"),
+                    html.H1("Bjerrum Plot Tool (work in progress)"),
 
                     dcc.Markdown(
                         """

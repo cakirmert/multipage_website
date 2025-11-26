@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="force xaxis labels ion 10 steps">
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="update x-axis with 10^x format">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assets/pCO2-DIC.md" beforeDir="false" afterPath="$PROJECT_DIR$/assets/pCO2-DIC.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,15 +187,7 @@
       <workItem from="1763644934627" duration="255000" />
       <workItem from="1763647104502" duration="1290000" />
       <workItem from="1764066326588" duration="64000" />
-      <workItem from="1764151781264" duration="8667000" />
-    </task>
-    <task id="LOCAL-00013" summary="new table header with superscripts">
-      <option name="closed" value="true" />
-      <created>1732101396307</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1732101396307</updated>
+      <workItem from="1764151781264" duration="9291000" />
     </task>
     <task id="LOCAL-00014" summary="added cations and anions blocks">
       <option name="closed" value="true" />
@@ -583,7 +573,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764160940781</updated>
     </task>
-    <option name="localTasksCounter" value="62" />
+    <task id="LOCAL-00062" summary="update x-axis with 10^x format">
+      <option name="closed" value="true" />
+      <created>1764167641180</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1764167641181</updated>
+    </task>
+    <option name="localTasksCounter" value="63" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -601,7 +599,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="removed factor 2 from the equation" />
     <MESSAGE value="changed CBE unit" />
     <MESSAGE value="changed abs" />
     <MESSAGE value="changed text" />
@@ -626,9 +623,10 @@
     <MESSAGE value="changes in design + added a new text for the pCO2 DIC plot" />
     <MESSAGE value="changed  CO2 labels and plot height" />
     <MESSAGE value="force xaxis labels ion 10 steps" />
-    <option name="LAST_COMMIT_MESSAGE" value="force xaxis labels ion 10 steps" />
+    <MESSAGE value="update x-axis with 10^x format" />
+    <option name="LAST_COMMIT_MESSAGE" value="update x-axis with 10^x format" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764167231230" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764167558023" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
