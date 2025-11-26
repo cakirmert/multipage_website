@@ -2267,7 +2267,7 @@ def update_plot(selected_ta):
 
         # --- LEGEND FONT ---
         legend=dict(
-            x=0.02,  # X position (0 = left, 1 = right)
+            x=0.05,  # X position (0 = left, 1 = right)
             y=0.98,  # Y position (0 = bottom, 1 = top)
             bgcolor="rgba(255,255,255,0.6)",  # optional: white transparent box
             bordercolor="rgba(0,0,0,0.2)",
