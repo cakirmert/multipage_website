@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="removed the plot title and adjustede plot margins">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="corrected thge fontsize of the pCO2 app and corrected the titles">
+      <change beforePath="$PROJECT_DIR$/assets/pCO2-DIC.md" beforeDir="false" afterPath="$PROJECT_DIR$/assets/pCO2-DIC.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -188,15 +187,7 @@
       <workItem from="1763644934627" duration="255000" />
       <workItem from="1763647104502" duration="1290000" />
       <workItem from="1764066326588" duration="64000" />
-      <workItem from="1764151781264" duration="11243000" />
-    </task>
-    <task id="LOCAL-00016" summary="made website more safe (dont allow comma in input and say error otherwise)">
-      <option name="closed" value="true" />
-      <created>1732724044484</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1732724044484</updated>
+      <workItem from="1764151781264" duration="11664000" />
     </task>
     <task id="LOCAL-00017" summary="made website more safe (dont allow comma in input and say error otherwise)">
       <option name="closed" value="true" />
@@ -582,7 +573,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764170462866</updated>
     </task>
-    <option name="localTasksCounter" value="65" />
+    <task id="LOCAL-00065" summary="corrected thge fontsize of the pCO2 app and corrected the titles">
+      <option name="closed" value="true" />
+      <created>1764171680637</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1764171680637</updated>
+    </task>
+    <option name="localTasksCounter" value="66" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -600,7 +599,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="changed text" />
     <MESSAGE value="two new apps implemented to the webpage + one more requirement" />
     <MESSAGE value="fixed requirements" />
     <MESSAGE value="requirements back to old" />
@@ -625,9 +623,10 @@
     <MESSAGE value="update x-axis with 10^x format" />
     <MESSAGE value="add text to bjerrum plot app" />
     <MESSAGE value="removed the plot title and adjustede plot margins" />
-    <option name="LAST_COMMIT_MESSAGE" value="removed the plot title and adjustede plot margins" />
+    <MESSAGE value="corrected thge fontsize of the pCO2 app and corrected the titles" />
+    <option name="LAST_COMMIT_MESSAGE" value="corrected thge fontsize of the pCO2 app and corrected the titles" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764171263404" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764171880042" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
