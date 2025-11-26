@@ -2266,7 +2266,14 @@ def update_plot(selected_ta):
         font=dict(size=18),  # overall plot font (ticks + legend)
 
         # --- LEGEND FONT ---
-        legend=dict(font=dict(size=20)),
+        legend=dict(
+            x=0.02,  # X position (0 = left, 1 = right)
+            y=0.98,  # Y position (0 = bottom, 1 = top)
+            bgcolor="rgba(255,255,255,0.6)",  # optional: white transparent box
+            bordercolor="rgba(0,0,0,0.2)",
+            borderwidth=1
+        ),
+
 
         template="plotly_white"
     )
