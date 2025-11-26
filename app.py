@@ -2246,7 +2246,7 @@ def update_plot(selected_ta):
     ))
 
     fig.update_layout(
-        height=1200,
+        height=800,
 
         # --- TITLE FONT ---
         title=dict(
