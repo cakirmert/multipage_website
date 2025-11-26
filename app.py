@@ -2080,7 +2080,16 @@ def update_bjerrum_plot(acid_species):
         xaxis_title="pH",
         yaxis_title="Fraction",
         # yaxis=dict(range=[0, 1]),
-        template="plotly_white"
+        template="plotly_white",
+        # --- LEGEND FONT ---
+        legend=dict(
+            x=0.8,  # X position (0 = left, 1 = right)
+            y=0.5,  # Y position (0 = bottom, 1 = top)
+            bgcolor="rgba(255,255,255,0.6)",  # optional: white transparent box
+            bordercolor="rgba(0,0,0,0.2)",
+            borderwidth=1
+        ),
+
     )
     return fig
 
