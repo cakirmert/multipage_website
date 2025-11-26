@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="chnaged style settings in the pCO2 app" />
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="moved legend inside the plot in the pCO2 app (again)">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -185,23 +188,7 @@
       <workItem from="1763644934627" duration="255000" />
       <workItem from="1763647104502" duration="1290000" />
       <workItem from="1764066326588" duration="64000" />
-      <workItem from="1764151781264" duration="12683000" />
-    </task>
-    <task id="LOCAL-00020" summary="made website more safe (dont allow comma in input and say error otherwise)">
-      <option name="closed" value="true" />
-      <created>1732732780492</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1732732780492</updated>
-    </task>
-    <task id="LOCAL-00021" summary="made website more safe (dont allow comma in input and say error otherwise)">
-      <option name="closed" value="true" />
-      <created>1732732991337</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1732732991337</updated>
+      <workItem from="1764151781264" duration="13420000" />
     </task>
     <task id="LOCAL-00022" summary="changes home layout texts">
       <option name="closed" value="true" />
@@ -579,7 +566,23 @@
       <option name="project" value="LOCAL" />
       <updated>1764172269478</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="moved legend inside the plot in the pCO2 app">
+      <option name="closed" value="true" />
+      <created>1764173435503</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1764173435503</updated>
+    </task>
+    <task id="LOCAL-00070" summary="moved legend inside the plot in the pCO2 app (again)">
+      <option name="closed" value="true" />
+      <created>1764173477662</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1764173477662</updated>
+    </task>
+    <option name="localTasksCounter" value="71" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -597,8 +600,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="requirements back to old" />
-    <MESSAGE value="exact local requirements" />
     <MESSAGE value="added spaceholder plot for the forsterite dissolution" />
     <MESSAGE value="simpler app" />
     <MESSAGE value="add engine to the load mineral" />
@@ -622,9 +623,11 @@
     <MESSAGE value="corrected the markdown text using proper subscripts" />
     <MESSAGE value="corrected thge fontsize of the pCO2 app and corrected the titles" />
     <MESSAGE value="chnaged style settings in the pCO2 app" />
-    <option name="LAST_COMMIT_MESSAGE" value="chnaged style settings in the pCO2 app" />
+    <MESSAGE value="moved legend inside the plot in the pCO2 app" />
+    <MESSAGE value="moved legend inside the plot in the pCO2 app (again)" />
+    <option name="LAST_COMMIT_MESSAGE" value="moved legend inside the plot in the pCO2 app (again)" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764172198003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764174014263" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

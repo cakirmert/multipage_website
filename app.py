@@ -2004,7 +2004,10 @@ def calculate_bjerrum(acid_species, total_conc=1e-3, pH_range=(0, 14), step=0.1)
 
     # Always resolve the file path relative to THIS script's location
     BASE_DIR = Path(__file__).resolve().parent
+
+
     db_path = BASE_DIR / "assets" / "phreeqc_databases" / "minteq.v4_with_fix_pH_and_corrected_CO2.dat"
+
 
     # create the engine using your custom database
     pp = phreeqpython.PhreeqPython(database=str(db_path))
