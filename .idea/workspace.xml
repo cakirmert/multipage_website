@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="new seawater app implemented">
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="changed yaxis and xaxis of mineral dissolution apps">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
@@ -179,15 +179,16 @@
       <workItem from="1754922767492" duration="2237000" />
       <workItem from="1754988588868" duration="2415000" />
       <workItem from="1755171780700" duration="2163000" />
-      <workItem from="1755185004061" duration="3589000" />
-    </task>
-    <task id="LOCAL-00006" summary="updated the README">
-      <option name="closed" value="true" />
-      <created>1712936070158</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1712936070159</updated>
+      <workItem from="1755185004061" duration="5321000" />
+      <workItem from="1755190828692" duration="20000" />
+      <workItem from="1757068508743" duration="5698000" />
+      <workItem from="1759918783478" duration="59000" />
+      <workItem from="1763475212510" duration="623000" />
+      <workItem from="1763481848545" duration="830000" />
+      <workItem from="1763644934627" duration="255000" />
+      <workItem from="1763647104502" duration="1290000" />
+      <workItem from="1764066326588" duration="64000" />
+      <workItem from="1764151781264" duration="1934000" />
     </task>
     <task id="LOCAL-00007" summary="updated the README">
       <option name="closed" value="true" />
@@ -573,7 +574,15 @@
       <option name="project" value="LOCAL" />
       <updated>1755188031401</updated>
     </task>
-    <option name="localTasksCounter" value="55" />
+    <task id="LOCAL-00055" summary="changed yaxis and xaxis of mineral dissolution apps">
+      <option name="closed" value="true" />
+      <created>1755188713703</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1755188713704</updated>
+    </task>
+    <option name="localTasksCounter" value="56" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -591,7 +600,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="updated texts with CBE equations and references" />
     <MESSAGE value="convert comma to point to avoid input error" />
     <MESSAGE value="comma and point fix (more flexibility)" />
     <MESSAGE value="input type text (to avoid red outline data typüe check box)" />
@@ -616,9 +624,10 @@
     <MESSAGE value="adding rate output to app" />
     <MESSAGE value="new background images" />
     <MESSAGE value="new seawater app implemented" />
-    <option name="LAST_COMMIT_MESSAGE" value="new seawater app implemented" />
+    <MESSAGE value="changed yaxis and xaxis of mineral dissolution apps" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed yaxis and xaxis of mineral dissolution apps" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1755188520225" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764153094756" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

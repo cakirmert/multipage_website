@@ -22,6 +22,7 @@ from dash.exceptions import PreventUpdate
 from queue import Queue
 from contextlib import contextmanager
 import PyCO2SYS as pyco2
+from pathlib import Path
 # ─────────────────────────────  CONSTANTS & STYLES  ──────────────────────────
 MAX_WIDTH = "1160px"   # global content width (≈ 12‑col Bootstrap container)
 PAD_Y     = "2rem"     # vertical padding for header / page bottom
@@ -714,6 +715,9 @@ def _hero_card(title: str, desc: str, href: str) -> dbc.Card:
         style={"borderRadius": "1rem", "padding": "1.5rem", "maxWidth": "340px"},
     )
 
+
+# Here one must include the new applications and the sublink
+
 def home_layout() -> html.Div:
     hero = html.Div(
         [
@@ -782,13 +786,32 @@ def home_layout() -> html.Div:
                     ),
                     dbc.Col(
                         _hero_card(
-                            [
-                                "Forsterite Dissolution",
+                            ["Forsterite Dissolution",
                                 html.Br(),
                                 "f(pH, T, size)"
-                            ],
+                                ],
                             "Forsterite dissolution model dependent on pH, temperature, and crystal radius.",
                             "/forsterite-dissolution",
+                        ),
+                        md=6,
+                        lg=4,
+                        class_name="mb-4",
+                    ),
+                    dbc.Col(
+                        _hero_card(
+                            "Bjerrum Plot Explorer",
+                            "Bjerrum plots of selected organic acids and carbonic acid",
+                            "/bjerrum-plot-explorer",
+                        ),
+                        md=6,
+                        lg=4,
+                        class_name="mb-4",
+                    ),
+                    dbc.Col(
+                        _hero_card(
+                            "DIC-pCO2 relationship",
+                            "pCO2 and DIC relationship for diffrent TA",
+                            "/dic-pCO2",
                         ),
                         md=6,
                         lg=4,
@@ -1904,6 +1927,419 @@ def update_forsterite_plot(pH, temp, radius):
 
 
 # ────────────────────────────────────────────────────────────────────────────
+#   Bjerrum plot app
+# ────────────────────────────────────────────────────────────────────────────
+
+# resolve relative path to an absolute one
+# db_path = Path.cwd() / "phreeqc_databases" / "vitens_lukas_edit.dat"
+# db_path = Path.cwd() / "phreeqc_databases" / "minteq.v4_lukas_edit.dat"
+
+
+
+# ---------- helpers ----------
+
+def count_protons_in_master(master):
+    """
+    Extract total proton count from master species string, e.g. 'H3(Citrate)' -> 3.
+    """
+    m = re.match(r'H(\d+)\(', master)
+    return int(m.group(1)) if m else 1
+
+
+def count_H_in_species(species, core):
+    """
+    Count how many protons are explicitly attached to the acid core.
+
+    Matches things like:
+        H3(Citrate)-   -> 3
+        H(Citrate)-    -> 1
+        NaH(Citrate)-  -> 1   (ignore leading Na, just look at the H() group)
+        Na2(Citrate)-  -> 0
+        Citrate-3      -> 0
+    """
+    m = re.search(r'(H\d*)\(' + re.escape(core) + r'\)', species)
+    if m:
+        token = m.group(1)
+        return 1 if token == "H" else int(token[1:])
+    return 0
+
+
+def group_by_protons(sol, master_species):
+    """
+    Build a dict {n_H: total_moles} for each protonation state.
+    """
+    core = master_species.split("(")[1].split(")")[0]
+    sums = defaultdict(float)
+
+    for sp, val in sol.species.items():
+        if core in sp:
+            nH = count_H_in_species(sp, core)
+            sums[nH] += val
+    return sums
+
+
+def parse_acid_master(master):
+    """
+    Return (core, n_total_protons) for any acid string.
+    - handles 'H3(Citrate)' pattern automatically
+
+    """
+
+    if "(" in master and ")" in master:
+        core = master.split("(")[1].split(")")[0]
+        m = re.match(r'H(\d+)', master)
+        nH = int(m.group(1)) if m else 1
+        return core, nH
+
+    # last fallback: assume no parentheses, try a single H
+    return master, 1
+
+
+# ---------- main routine ----------
+
+def calculate_bjerrum(acid_species, total_conc=1e-3, pH_range=(0, 14), step=0.1):
+    pHs = np.arange(pH_range[0], pH_range[1] + step, step)
+    records = []
+
+    # Always resolve the file path relative to THIS script's location
+    BASE_DIR = Path(__file__).resolve().parent
+    db_path = BASE_DIR / "assets" / "phreeqc_databases" / "minteq.v4_with_fix_pH_and_corrected_CO2.dat"
+
+    # create the engine using your custom database
+    pp = phreeqpython.PhreeqPython(database=str(db_path))
+
+    sol = pp.add_solution_simple({acid_species: total_conc},
+                                 temperature=20,
+                                 units='mol')
+
+    for ph in pHs:
+        sol.change_ph(ph)
+
+        # spec = sol.species
+        acid_str = acid_species
+        if "(" in acid_str and ")" in acid_str:
+
+            core, n_total = parse_acid_master(acid_species)
+
+            # protonation groups
+            group_sums = group_by_protons(sol, acid_species)
+            for nH in range(n_total + 1):
+                records.append({
+                    "pH": ph,
+                    "kind": "group",
+                    "species": f"H{nH}({core})",
+                    "value": group_sums.get(nH, 0.0) / total_conc
+                })
+
+        elif 'CO3' in acid_str:  # option for carbonic acid
+            co2 = sol.total("CO2", units="mol")  # or "mmol" if you prefer
+            hco3 = sol.total("HCO3", units="mol")
+            co3 = sol.total("CO3", units="mol")
+
+            records.append({"pH": ph, "kind": "group", "species": "CO2(aq)", "value": co2 / total_conc})
+            records.append({"pH": ph, "kind": "group", "species": "HCO3-", "value": hco3 / total_conc})
+            records.append({"pH": ph, "kind": "group", "species": "CO3--", "value": co3 / total_conc})
+
+        else:
+            None
+
+    return pd.DataFrame(records)
+
+
+# acid options
+ACID_OPTIONS = {
+    "Carbonic acid (H2CO3)": "H2CO3",  # depends on DB
+    "Benzoic acid":'H(Benzoate)',
+    "Acetic acid": 'H(Acetate)',
+    "Citric acid": 'H3(Citrate)',
+    "Formic acid": 'H(Formate)',
+}
+
+
+@app.callback(
+    Output("bjerrum-plot", "figure"),
+    Input("acid-dropdown", "value")
+)
+
+
+def update_bjerrum_plot(acid_species):
+    df = calculate_bjerrum(acid_species)
+    fig = go.Figure()
+    for species in df["species"].unique():
+        sub = df[df["species"] == species]
+        fig.add_trace(go.Scatter(
+            x=sub["pH"], y=sub["value"],
+            mode="lines", name=species
+        ))
+
+    fig.update_layout(
+        xaxis_title="pH",
+        yaxis_title="Fraction",
+        # yaxis=dict(range=[0, 1]),
+        template="plotly_white"
+    )
+    return fig
+
+from dash import html, dcc
+
+# assume you already have SiteHeader and Footer components imported
+
+def bjerrum_layout():
+    return html.Div(
+        [
+            html.Div(
+                [
+                    SiteHeader(
+                        "Bjerrum Plot Viewer",
+                        [("Home", "/"), ("Bjerrum Plot", "/bjerrum")],
+                    ),
+
+                    html.H1("Bjerrum Plot Tool"),
+
+                    dcc.Markdown(
+                        """
+                        *Use this page to explore acid speciation vs pH.*
+
+                        Select an acid, adjust pH range, and the chart will update automatically.
+                        """,
+                        mathjax=True
+                    ),
+
+                    # Placeholder dropdown for acid selection
+                    html.Label(
+                        "Acid species:",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginTop": "20px",
+                            "marginBottom": "10px",
+                        }
+                    ),
+                    dcc.Dropdown(
+                        id="acid-dropdown",
+                        options=[
+                            {"label": "Carbonic acid (H2CO3)", "value": "H2CO3"},
+                            {"label": "Citric acid", "value": "H3(Citrate)"},
+                            {"label": "Benzoic acid", "value": "H(Benzoate)"},
+                            {"label": "Acetic acid", "value": "H(Acetate)"},
+                            {"label": "Formic acid", "value": "H(Formate)"},
+                        ],
+                        value="H2CO3",
+                        style={"width": "300px"}
+                    ),
+
+                    dcc.Graph(id="bjerrum-plot"),
+
+                    html.Hr(),
+                    html.H2("Notes"),
+                    dcc.Markdown(
+                        """
+                        *The figure shows the calculated fraction of each protonation state as a function of pH.*
+                        """
+                    ),
+                ],
+                style={
+                    "width": "90%",
+                    "margin": "0 auto",
+                    "padding": "20px"
+                },
+            ),
+
+            Footer(),
+        ],
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "minHeight": "100vh",
+        },
+    )
+
+# ────────────────────────────────────────────────────────────────────────────
+#   pCO2, DIC, TA plot app
+# ────────────────────────────────────────────────────────────────────────────
+
+# create new PhreeqPython instance
+pp = phreeqpython.PhreeqPython(database='vitens.dat')
+
+# === 1) PRECOMPUTE THE GRID (your phreeqpython code) ===
+
+TA_values = np.arange(1, 51)  # 1–50 mmol/kgw
+CO2_list = [10**(i/10) for i in range(0, 61)]  # ppm
+
+n_TA = len(TA_values)
+n_CO2 = len(CO2_list)
+
+DIC_grid = np.zeros((n_TA, n_CO2))  # Z surface: DIC(TA, pCO2)
+
+for i, TA in enumerate(TA_values):
+    for j, p in enumerate(CO2_list):
+
+        # fresh solution for each (TA, pCO2) pair
+        solution = pp.add_solution({
+            "units": "mmol/kgw",
+            "density": 1.000,
+            "temp": 25,
+            "Mg": TA / 2,
+            "Alkalinity": TA
+        })
+
+        # ppm -> atm
+        pCO2 = p * 1e-6
+
+        # phreeqc uses log10(pCO2)
+        input_pCO2 = np.log10(pCO2)
+        solution.equalize(['CO2(g)'], [input_pCO2])
+
+        # DIC in mmol/kgw (assuming elements['C(4)'] is mol/kgw)
+        DIC_val = solution.elements['C(4)'] * 1000.0
+
+        DIC_grid[i, j] = DIC_val
+
+
+
+
+
+@app.callback(
+    Output('dic-plot', 'figure'),
+    Input('ta-slider', 'value')
+)
+def update_plot(selected_ta):
+    # find index of selected TA
+    idx = np.where(TA_values == selected_ta)[0][0]
+
+    x = CO2_list            # pCO2 [ppm]
+    y = DIC_grid[idx, :]    # DIC for this TA
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=x,
+        y=y,
+        mode='lines',
+        name="DIC"
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=x,
+        y=[selected_ta] * len(x),
+        mode='lines',
+        name=f"TA = {selected_ta} mmol/kgw"
+    ))
+
+    # add vertical line for the atmopheric partial pressure
+
+    # get full y-range dynamically
+    ymin = min(y)
+    ymax = max(y)
+
+    fig.add_trace(go.Scatter(
+        x=[425, 425],  # vertical line at x = 425 ppm
+        y=[ymin, ymax],  # span full y range
+        mode='lines',
+        line=dict(color='black', width=2, dash='dash'),
+        name='CO₂ = 425 ppm (atmospheric CO2 pressure)'
+    ))
+
+
+    fig.update_layout(
+        height=1200,  # ← taller figure
+        xaxis_title="pCO₂ [ppm]",
+        yaxis_title="x [mmol/kgw]",
+        title=f"DIC vs pCO₂ at TA = {selected_ta} mmol/kgw",
+        template="plotly_white"
+    )
+    fig.update_xaxes(type='log') # log for the pCO2
+    fig.update_yaxes(type="log")  # log y-axis  ← add this
+
+    return fig
+
+
+
+
+def dic_pco2_layout():
+    return html.Div(
+        [
+            html.Div(
+                [
+                    SiteHeader(
+                        "DIC vs pCO₂ Viewer",
+                        [("Home", "/"), ("DIC vs pCO₂", "/dic-pco2")],
+                    ),
+
+                    html.H1("DIC vs pCO₂ for different TA levels"),
+
+                    dcc.Markdown(
+                        """
+                        *Use this page to explore how dissolved inorganic carbon (DIC) 
+                        varies with pCO₂ for different total alkalinity (TA) levels.*
+
+                        Adjust the TA slider below to see how the curve changes.
+                        """,
+                        mathjax=True,
+                    ),
+
+                    # Slider label
+                    html.Label(
+                        "Total Alkalinity (TA):",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginTop": "20px",
+                            "marginBottom": "10px",
+                        },
+                    ),
+
+                    # TA slider
+                    dcc.Slider(
+                        id="ta-slider",
+                        min=int(TA_values.min()),
+                        max=int(TA_values.max()),
+                        step=1,
+                        value=int(TA_values.min()),  # or any default, e.g. 5
+                        marks={int(t): str(int(t)) for t in TA_values[::5]},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                    ),
+
+                    # Main plot
+                    dcc.Graph(id="dic-plot"),
+
+                    html.Hr(),
+                    html.H2("Notes"),
+                    dcc.Markdown(
+                        """
+                        *The figure shows modelled DIC as a function of pCO₂ 
+                        at the selected TA level.*
+                        """
+                    ),
+                ],
+                style={
+                    "width": "90%",
+                    "margin": "0 auto",
+                    "padding": "20px",
+                },
+            ),
+
+            Footer(),
+        ],
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "minHeight": "100vh",
+        },
+    )
+
+
+
+# ────────────────────────────────────────────────────────────────────────────
 # 1️⃣  Charge-Balance mini-app                                                  
 # ────────────────────────────────────────────────────────────────────────────
 
@@ -2165,11 +2601,14 @@ def display_page(pathname: str):
         return mineral_layout()
     if pathname == "/forsterite-dissolution":
         return forsterite_dissolution_layout()
+    if pathname == "/bjerrum-plot-explorer":
+        return bjerrum_layout()
     if pathname == "/charge-balance":
         return cb_layout()
     if pathname == "/carbonate-system-modeling-seawater":
         return seawater_layout()
-
+    if pathname == "/dic-pCO2":
+        return dic_pco2_layout()
     if pathname == "/impressum":
         return legal_layout(IMPRESSUM_MD, "Impressum", pathname)
     if pathname == "/datenschutz":
