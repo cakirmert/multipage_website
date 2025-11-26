@@ -2241,7 +2241,7 @@ def update_plot(selected_ta):
         y=[selected_ta] * len(x),
         mode='lines',
         name=f"TA = {selected_ta} mmol/kg<sub>w</sub>",
-        line=dict(dash='dash', width=2)  # ← dashed line
+        line=dict(dash='dot', width=2)  # ← dashed line
     ))
 
     # add vertical line for the atmopheric partial pressure

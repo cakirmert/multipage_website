@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="move legend in bjerrum plot app inside the plot" />
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="make TA line in the pCO2 plot dashed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -185,15 +185,7 @@
       <workItem from="1763644934627" duration="255000" />
       <workItem from="1763647104502" duration="1290000" />
       <workItem from="1764066326588" duration="64000" />
-      <workItem from="1764151781264" duration="14213000" />
-    </task>
-    <task id="LOCAL-00024" summary="text changes">
-      <option name="closed" value="true" />
-      <created>1745416197444</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1745416197444</updated>
+      <workItem from="1764151781264" duration="14951000" />
     </task>
     <task id="LOCAL-00025" summary="changed default values for seawater and changed alkalinity unit">
       <option name="closed" value="true" />
@@ -579,7 +571,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764174813770</updated>
     </task>
-    <option name="localTasksCounter" value="73" />
+    <task id="LOCAL-00073" summary="make TA line in the pCO2 plot dashed">
+      <option name="closed" value="true" />
+      <created>1764175085050</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1764175085050</updated>
+    </task>
+    <option name="localTasksCounter" value="74" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -597,7 +597,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="add engine to the load mineral" />
     <MESSAGE value="fixed loading data from correct filepath" />
     <MESSAGE value="Updated README.md file" />
     <MESSAGE value="implemented forsterite app" />
@@ -622,9 +621,10 @@
     <MESSAGE value="moved legend inside the plot in the pCO2 app (again)" />
     <MESSAGE value="also uplaod the database files (the owen edited database files)" />
     <MESSAGE value="move legend in bjerrum plot app inside the plot" />
-    <option name="LAST_COMMIT_MESSAGE" value="move legend in bjerrum plot app inside the plot" />
+    <MESSAGE value="make TA line in the pCO2 plot dashed" />
+    <option name="LAST_COMMIT_MESSAGE" value="make TA line in the pCO2 plot dashed" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764174717624" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764175035606" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
