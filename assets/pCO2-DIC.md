@@ -16,7 +16,7 @@ $$
 
 ---
 
-### Total Alkality (TA)
+### Total Alkalinity (TA)
 The total alkalinity can be composed of different conjugate base of any weak acid.
 
 The model used here assumes **pure carbonate alkalinity**, meaning that alkalinity arises only from the carbonate system and not from organic acids or other weak acid–base pairs.
