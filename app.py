@@ -65,6 +65,7 @@ SOME_TEXT_MD  = read_asset("sometext.md")
 INPUT_BOX_MD  = read_asset("Textbox_input.md")
 OUTPUT_BOX_MD = read_asset("Textbox_output.md")
 CBE_CALCULATION_MD = read_asset("CBE_calc_text.md")
+PCO2_DIC_TEXT_MD = read_asset("pCO2-DIC.md")
 REFS_CBE_MD = read_asset("references_CBE.md")
 
 # for new apps
@@ -2241,17 +2242,34 @@ def update_plot(selected_ta):
         y=[ymin, ymax],  # span full y range
         mode='lines',
         line=dict(color='black', width=2, dash='dash'),
-        name='CO₂ = 425 ppm (atmospheric CO2 pressure)'
+        name='pCO₂ = 425 ppm<br>(atmospheric<br>CO2 pressure)'
     ))
 
-
     fig.update_layout(
-        height=1200,  # ← taller figure
+        height=1200,
+
+        # --- TITLE FONT ---
+        title=dict(
+            text=f"DIC vs pCO₂ at TA = {selected_ta} mmol/kgw",
+            font=dict(size=28)  # title size
+        ),
+
+        # --- AXIS LABEL FONTS ---
         xaxis_title="pCO₂ [ppm]",
-        yaxis_title="x [mmol/kgw]",
-        title=f"DIC vs pCO₂ at TA = {selected_ta} mmol/kgw",
+        yaxis_title="DIC [mmol/kgw]",
+
+        xaxis=dict(titlefont=dict(size=22)),
+        yaxis=dict(titlefont=dict(size=22)),
+
+        # --- TICK LABEL SIZE ---
+        font=dict(size=18),  # overall plot font (ticks + legend)
+
+        # --- LEGEND FONT ---
+        legend=dict(font=dict(size=20)),
+
         template="plotly_white"
     )
+
     fig.update_xaxes(type='log') # log for the pCO2
     fig.update_yaxes(type="log")  # log y-axis  ← add this
 
@@ -2272,15 +2290,7 @@ def dic_pco2_layout():
 
                     html.H1("DIC vs pCO₂ for different TA levels"),
 
-                    dcc.Markdown(
-                        """
-                        *Use this page to explore how dissolved inorganic carbon (DIC) 
-                        varies with pCO₂ for different total alkalinity (TA) levels.*
-
-                        Adjust the TA slider below to see how the curve changes.
-                        """,
-                        mathjax=True,
-                    ),
+                    dcc.Markdown(PCO2_DIC_TEXT_MD, mathjax=True),
 
                     # Slider label
                     html.Label(

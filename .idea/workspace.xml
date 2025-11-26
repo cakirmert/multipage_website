@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="added a whole new app pCO2-DIc to the website (dic_pco2_layout())" />
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="added a whole new app pCO2-DIc to the website (dic_pco2_layout())">
+      <change afterPath="$PROJECT_DIR$/assets/pCO2-DIC.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -185,15 +189,7 @@
       <workItem from="1763644934627" duration="255000" />
       <workItem from="1763647104502" duration="1290000" />
       <workItem from="1764066326588" duration="64000" />
-      <workItem from="1764151781264" duration="2283000" />
-    </task>
-    <task id="LOCAL-00008" summary="updated the README">
-      <option name="closed" value="true" />
-      <created>1712936306714</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1712936306714</updated>
+      <workItem from="1764151781264" duration="3746000" />
     </task>
     <task id="LOCAL-00009" summary="updated the plot size and oder">
       <option name="closed" value="true" />
@@ -579,7 +575,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764154027709</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="added a whole new app pCO2-DIc to the website (dic_pco2_layout())">
+      <option name="closed" value="true" />
+      <created>1764154109577</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1764154109578</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -625,6 +629,6 @@
     <option name="LAST_COMMIT_MESSAGE" value="added a whole new app pCO2-DIc to the website (dic_pco2_layout())" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764153861755" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764155516855" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>
