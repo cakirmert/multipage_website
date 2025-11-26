@@ -811,7 +811,7 @@ def home_layout() -> html.Div:
                     dbc.Col(
                         _hero_card(
                             "DIC-pCO2 relationship",
-                            "pCO2 and DIC relationship for diffrent TA",
+                            "pCO2 and DIC relationship for different TA",
                             "/dic-pCO2",
                         ),
                         md=6,
@@ -2169,7 +2169,7 @@ pp = phreeqpython.PhreeqPython(database='vitens.dat')
 
 # === 1) PRECOMPUTE THE GRID (your phreeqpython code) ===
 
-TA_values = np.arange(1, 51)  # 1–50 mmol/kgw
+TA_values = np.arange(0, 51)  # 1–50 mmol/kgw
 CO2_list = [10**(i/10) for i in range(0, 61)]  # ppm
 
 n_TA = len(TA_values)
@@ -2242,7 +2242,7 @@ def update_plot(selected_ta):
         y=[ymin, ymax],  # span full y range
         mode='lines',
         line=dict(color='black', width=2, dash='dash'),
-        name='pCO<sub>2</sub> = 425 ppm<br>(atmospheric<br>CO2 pressure)'
+        name='pCO<sub>2</sub> = 425 ppm<br>(atmospheric<br>CO<sub>2</sub> pressure)'
     ))
 
     fig.update_layout(
@@ -2274,9 +2274,9 @@ def update_plot(selected_ta):
     fig.update_xaxes(
         type="log",
         tickvals=[1, 10, 100, 1000, 10000, 100000,1000000],
-        ticktext=["1", "10", "100", "1k", "10k", "100k","1M"]
+        ticktext=["10<sup>0</sup>", "10<sup>1</sup>", "10<sup>2</sup>", "10<sup>3</sup>", "10<sup>4</sup>", "10<sup>5</sup>","10<sup>6</sup>"]
     ) # log for the pCO2
-    fig.update_yaxes(type="log")  # log y-axis  ← add this
+    fig.update_yaxes(type="log",nticks=6)  # log y-axis  ← add this
 
     return fig
 
@@ -2319,7 +2319,7 @@ def dic_pco2_layout():
                         min=int(TA_values.min()),
                         max=int(TA_values.max()),
                         step=1,
-                        value=int(TA_values.min()),  # or any default, e.g. 5
+                        value=2,  # ← default slider position
                         marks={int(t): str(int(t)) for t in TA_values[::5]},
                         tooltip={"placement": "bottom", "always_visible": True},
                     ),

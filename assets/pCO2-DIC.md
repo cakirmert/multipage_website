@@ -1,13 +1,8 @@
 Dissolved Inorganic Carbon (DIC) represents the sum of all inorganic carbon species dissolved in water.  
 It is a key variable of the carbonate system and directly linked to pH, alkalinity, and gas exchange with atmospheric CO₂.
 
-The carbonate model used here assumes **pure carbonate alkalinity**, meaning that alkalinity arises only from the carbonate system and not from organic acids or other weak acid–base pairs.
 
-We define total alkalinity (TA) as:
 
-$$
-\mathrm{TA} = [\mathrm{HCO_3^-}] + 2[\mathrm{CO_3^{2-}}] - [\mathrm{H^+}] + [\mathrm{OH^-}]
-$$
 
 ---
 
@@ -21,9 +16,10 @@ $$
 
 ---
 
-### Assumptions
+### Total Alkality (TA)
+The total alkalinity can be composed of different conjugate base of any weak acid.
 
-We assume:
+The model used here assumes **pure carbonate alkalinity**, meaning that alkalinity arises only from the carbonate system and not from organic acids or other weak acid–base pairs.
 
 - The system contains only CO₂(aq), HCO₃⁻, CO₃²⁻, H⁺, and OH⁻  
 - Total alkalinity is defined exclusively by carbonate species  
