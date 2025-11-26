@@ -2339,8 +2339,9 @@ def dic_pco2_layout():
                 style={
                     "fontSize": "20px",  # global font for all text inside this Div
                     "lineHeight": "1.6",
-                    "maxWidth": MAX_WIDTH,
-                    "margin": "0 auto"
+                    "maxWidth": "1000px",
+                    "margin": "0 auto",
+                    "padding": "20px"
                 },
 
             ),
