@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="changes in design + added a new text for the pCO2 DIC plot">
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
-    </list>
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="changed  CO2 labels and plot height" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -187,15 +185,7 @@
       <workItem from="1763644934627" duration="255000" />
       <workItem from="1763647104502" duration="1290000" />
       <workItem from="1764066326588" duration="64000" />
-      <workItem from="1764151781264" duration="5525000" />
-    </task>
-    <task id="LOCAL-00011" summary="updated legend on the graph and ion notation">
-      <option name="closed" value="true" />
-      <created>1719850396067</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1719850396067</updated>
+      <workItem from="1764151781264" duration="5844000" />
     </task>
     <task id="LOCAL-00012" summary="new table header with superscripts">
       <option name="closed" value="true" />
@@ -581,7 +571,15 @@
       <option name="project" value="LOCAL" />
       <updated>1764160099248</updated>
     </task>
-    <option name="localTasksCounter" value="60" />
+    <task id="LOCAL-00060" summary="changed  CO2 labels and plot height">
+      <option name="closed" value="true" />
+      <created>1764160665778</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1764160665791</updated>
+    </task>
+    <option name="localTasksCounter" value="61" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -599,7 +597,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="input type text (to avoid red outline data typüe check box)" />
     <MESSAGE value="improved text of the CBE explanation" />
     <MESSAGE value="removed factor 2 from the equation" />
     <MESSAGE value="changed CBE unit" />
@@ -624,9 +621,10 @@
     <MESSAGE value="changed yaxis and xaxis of mineral dissolution apps" />
     <MESSAGE value="added a whole new app pCO2-DIc to the website (dic_pco2_layout())" />
     <MESSAGE value="changes in design + added a new text for the pCO2 DIC plot" />
-    <option name="LAST_COMMIT_MESSAGE" value="changes in design + added a new text for the pCO2 DIC plot" />
+    <MESSAGE value="changed  CO2 labels and plot height" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed  CO2 labels and plot height" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764160129676" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764160623629" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

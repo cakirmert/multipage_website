@@ -2271,7 +2271,11 @@ def update_plot(selected_ta):
         template="plotly_white"
     )
 
-    fig.update_xaxes(type='log') # log for the pCO2
+    fig.update_xaxes(
+        type="log",
+        tickvals=[1, 10, 100, 1000, 10000, 100000,1000000],
+        ticktext=["1", "10", "100", "1k", "10k", "100k","1M"]
+    ) # log for the pCO2
     fig.update_yaxes(type="log")  # log y-axis  ← add this
 
     return fig
