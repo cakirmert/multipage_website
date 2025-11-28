@@ -2247,8 +2247,13 @@ def update_plot(selected_ta):
     # add vertical line for the atmopheric partial pressure
 
     # get full y-range dynamically
-    ymin = min(y)
-    ymax = max(y)
+
+    #ymin = min(y)
+    #ymax = max(y)
+
+    # dont make it dynamic anymore
+    ymin = 0.1
+    ymax = 100
 
     fig.add_trace(go.Scatter(
         x=[425, 425],  # vertical line at x = 425 ppm
@@ -2296,7 +2301,15 @@ def update_plot(selected_ta):
         tickvals=[1, 10, 100, 1000, 10000, 100000,1000000],
         ticktext=["10<sup>0</sup>", "10<sup>1</sup>", "10<sup>2</sup>", "10<sup>3</sup>", "10<sup>4</sup>", "10<sup>5</sup>","10<sup>6</sup>"]
     ) # log for the pCO2
-    fig.update_yaxes(type="log",nticks=6)  # log y-axis  ← add this
+
+    #force the y-axis to be constant scale
+    fig.update_yaxes(
+        type="log",
+        autorange=False,
+        range=[-1, 2],
+        tickvals=[0.1, 1, 10, 100],
+        ticktext=["10<sup>-1</sup>", "10<sup>0</sup>", "10<sup>1</sup>", "10<sup>2</sup>"],
+    )  # log y-axis  ← add this
 
     return fig
 
