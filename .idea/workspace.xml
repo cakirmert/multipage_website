@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="edited README">
+    <list default="true" id="3d62f3c3-0f38-47a8-9eb5-b3aa93ce4c9d" name="Changes" comment="make TA line in the pCO2 plot dotted">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
     </list>
@@ -59,27 +59,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "Python.app.executor": "Run",
-    "Python.multipage_website.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/u301072/PycharmProjects/XRF_app",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;Python.app.executor&quot;: &quot;Run&quot;,
+    &quot;Python.multipage_website.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/u301072/PycharmProjects/multipage_website/assets&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\u301072\PycharmProjects\multipage_website\assets" />
       <recent name="C:\Users\u301072\PycharmProjects\multipage_website\pages\assets" />
       <recent name="C:\Users\u301072\PycharmProjects\multipage_website\pages" />
       <recent name="C:\Users\u301072\PycharmProjects\multipage_website\templates" />
@@ -166,193 +167,423 @@
       <workItem from="1733931619913" duration="396000" />
       <workItem from="1733932030886" duration="2798000" />
       <workItem from="1734088119650" duration="8686000" />
-      <workItem from="1745399892786" duration="5958000" />
+      <workItem from="1745399892786" duration="6082000" />
+      <workItem from="1745572124806" duration="3433000" />
+      <workItem from="1745647590522" duration="11314000" />
+      <workItem from="1746638076243" duration="41000" />
+      <workItem from="1746694263178" duration="40000" />
+      <workItem from="1750149248694" duration="14431000" />
+      <workItem from="1750267070045" duration="21000" />
+      <workItem from="1754583343319" duration="7723000" />
+      <workItem from="1754646221001" duration="7297000" />
+      <workItem from="1754922767492" duration="2237000" />
+      <workItem from="1754988588868" duration="2415000" />
+      <workItem from="1755171780700" duration="2163000" />
+      <workItem from="1755185004061" duration="5321000" />
+      <workItem from="1755190828692" duration="20000" />
+      <workItem from="1757068508743" duration="5698000" />
+      <workItem from="1759918783478" duration="59000" />
+      <workItem from="1763475212510" duration="623000" />
+      <workItem from="1763481848545" duration="830000" />
+      <workItem from="1763644934627" duration="255000" />
+      <workItem from="1763647104502" duration="1290000" />
+      <workItem from="1764066326588" duration="64000" />
+      <workItem from="1764151781264" duration="15164000" />
+      <workItem from="1764343175546" duration="686000" />
     </task>
-    <task id="LOCAL-00001" summary="make the app work">
+    <task id="LOCAL-00026" summary="corrected Alkalinity name and unit in the table">
       <option name="closed" value="true" />
-      <created>1712932629854</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
+      <created>1750151311476</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
       <option name="project" value="LOCAL" />
-      <updated>1712932629854</updated>
+      <updated>1750151311476</updated>
     </task>
-    <task id="LOCAL-00002" summary="upload new app">
+    <task id="LOCAL-00027" summary="corrected relative CBE denominator">
       <option name="closed" value="true" />
-      <created>1712933318597</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
+      <created>1750151639812</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
       <option name="project" value="LOCAL" />
-      <updated>1712933318597</updated>
+      <updated>1750151639812</updated>
     </task>
-    <task id="LOCAL-00003" summary="last update from lukas for today">
+    <task id="LOCAL-00028" summary="updated texts with CBE equations and references">
       <option name="closed" value="true" />
-      <created>1712935248952</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
+      <created>1750157486464</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
       <option name="project" value="LOCAL" />
-      <updated>1712935248952</updated>
+      <updated>1750157486464</updated>
     </task>
-    <task id="LOCAL-00004" summary="some README update">
+    <task id="LOCAL-00029" summary="convert comma to point to avoid input error">
       <option name="closed" value="true" />
-      <created>1712935637352</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
+      <created>1750158310968</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
       <option name="project" value="LOCAL" />
-      <updated>1712935637352</updated>
+      <updated>1750158310968</updated>
     </task>
-    <task id="LOCAL-00005" summary="updated the .html files with datenschutz etc">
+    <task id="LOCAL-00030" summary="comma and point fix (more flexibility)">
       <option name="closed" value="true" />
-      <created>1712935799406</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
+      <created>1750159876114</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
       <option name="project" value="LOCAL" />
-      <updated>1712935799406</updated>
+      <updated>1750159876114</updated>
     </task>
-    <task id="LOCAL-00006" summary="updated the README">
+    <task id="LOCAL-00031" summary="input type text (to avoid red outline data typüe check box)">
       <option name="closed" value="true" />
-      <created>1712936070158</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
+      <created>1750160653496</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
       <option name="project" value="LOCAL" />
-      <updated>1712936070159</updated>
+      <updated>1750160653496</updated>
     </task>
-    <task id="LOCAL-00007" summary="updated the README">
+    <task id="LOCAL-00032" summary="improved text of the CBE explanation">
       <option name="closed" value="true" />
-      <created>1712936163399</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
+      <created>1750160968687</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
       <option name="project" value="LOCAL" />
-      <updated>1712936163399</updated>
+      <updated>1750160968687</updated>
     </task>
-    <task id="LOCAL-00008" summary="updated the README">
+    <task id="LOCAL-00033" summary="removed factor 2 from the equation">
       <option name="closed" value="true" />
-      <created>1712936306714</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
+      <created>1750165481955</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
       <option name="project" value="LOCAL" />
-      <updated>1712936306714</updated>
+      <updated>1750165481955</updated>
     </task>
-    <task id="LOCAL-00009" summary="updated the plot size and oder">
+    <task id="LOCAL-00034" summary="removed factor 2 from the equation">
       <option name="closed" value="true" />
-      <created>1715184455728</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
+      <created>1750165547748</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
       <option name="project" value="LOCAL" />
-      <updated>1715184455728</updated>
+      <updated>1750165547748</updated>
     </task>
-    <task id="LOCAL-00010" summary="updated legend on the graph and ion notation">
+    <task id="LOCAL-00035" summary="changed CBE unit">
       <option name="closed" value="true" />
-      <created>1719849758480</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
+      <created>1750165700263</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
       <option name="project" value="LOCAL" />
-      <updated>1719849758480</updated>
+      <updated>1750165700263</updated>
     </task>
-    <task id="LOCAL-00011" summary="updated legend on the graph and ion notation">
+    <task id="LOCAL-00036" summary="changed abs">
       <option name="closed" value="true" />
-      <created>1719850396067</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
+      <created>1750166044842</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
       <option name="project" value="LOCAL" />
-      <updated>1719850396067</updated>
+      <updated>1750166044842</updated>
     </task>
-    <task id="LOCAL-00012" summary="new table header with superscripts">
+    <task id="LOCAL-00037" summary="changed text">
       <option name="closed" value="true" />
-      <created>1719856472695</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
+      <created>1750166270622</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
       <option name="project" value="LOCAL" />
-      <updated>1719856472695</updated>
+      <updated>1750166270622</updated>
     </task>
-    <task id="LOCAL-00013" summary="new table header with superscripts">
+    <task id="LOCAL-00038" summary="two new apps implemented to the webpage + one more requirement">
       <option name="closed" value="true" />
-      <created>1732101396307</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
+      <created>1754588903225</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
       <option name="project" value="LOCAL" />
-      <updated>1732101396307</updated>
+      <updated>1754588903225</updated>
     </task>
-    <task id="LOCAL-00014" summary="added cations and anions blocks">
+    <task id="LOCAL-00039" summary="fixed requirements">
       <option name="closed" value="true" />
-      <created>1732119780813</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
+      <created>1754589468221</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
       <option name="project" value="LOCAL" />
-      <updated>1732119780813</updated>
+      <updated>1754589468221</updated>
     </task>
-    <task id="LOCAL-00015" summary="added cations and anions blocks">
+    <task id="LOCAL-00040" summary="fixed requirements">
       <option name="closed" value="true" />
-      <created>1732120288403</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
+      <created>1754589673225</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
       <option name="project" value="LOCAL" />
-      <updated>1732120288404</updated>
+      <updated>1754589673225</updated>
     </task>
-    <task id="LOCAL-00016" summary="made website more safe (dont allow comma in input and say error otherwise)">
+    <task id="LOCAL-00041" summary="requirements back to old">
       <option name="closed" value="true" />
-      <created>1732724044484</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
+      <created>1754589734413</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
       <option name="project" value="LOCAL" />
-      <updated>1732724044484</updated>
+      <updated>1754589734413</updated>
     </task>
-    <task id="LOCAL-00017" summary="made website more safe (dont allow comma in input and say error otherwise)">
+    <task id="LOCAL-00042" summary="exact local requirements">
       <option name="closed" value="true" />
-      <created>1732724111071</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
+      <created>1754590155409</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
       <option name="project" value="LOCAL" />
-      <updated>1732724111071</updated>
+      <updated>1754590155409</updated>
     </task>
-    <task id="LOCAL-00018" summary="made website more safe (dont allow comma in input and say error otherwise)">
+    <task id="LOCAL-00043" summary="added spaceholder plot for the forsterite dissolution">
       <option name="closed" value="true" />
-      <created>1732726737972</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
+      <created>1754590737690</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
       <option name="project" value="LOCAL" />
-      <updated>1732726737972</updated>
+      <updated>1754590737690</updated>
     </task>
-    <task id="LOCAL-00019" summary="made website more safe (dont allow comma in input and say error otherwise)">
+    <task id="LOCAL-00044" summary="simpler app">
       <option name="closed" value="true" />
-      <created>1732729249086</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
+      <created>1754591056098</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
       <option name="project" value="LOCAL" />
-      <updated>1732729249086</updated>
+      <updated>1754591056098</updated>
     </task>
-    <task id="LOCAL-00020" summary="made website more safe (dont allow comma in input and say error otherwise)">
+    <task id="LOCAL-00045" summary="add engine to the load mineral">
       <option name="closed" value="true" />
-      <created>1732732780492</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
+      <created>1754647163767</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
       <option name="project" value="LOCAL" />
-      <updated>1732732780492</updated>
+      <updated>1754647163767</updated>
     </task>
-    <task id="LOCAL-00021" summary="made website more safe (dont allow comma in input and say error otherwise)">
+    <task id="LOCAL-00046" summary="fixed loading data from correct filepath">
       <option name="closed" value="true" />
-      <created>1732732991337</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
+      <created>1754647488488</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
       <option name="project" value="LOCAL" />
-      <updated>1732732991337</updated>
+      <updated>1754647488488</updated>
     </task>
-    <task id="LOCAL-00022" summary="changes home layout texts">
+    <task id="LOCAL-00047" summary="Updated README.md file">
       <option name="closed" value="true" />
-      <created>1745404173953</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
+      <created>1754648132782</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
       <option name="project" value="LOCAL" />
-      <updated>1745404173953</updated>
+      <updated>1754648132782</updated>
     </task>
-    <task id="LOCAL-00023" summary="edited README">
+    <task id="LOCAL-00048" summary="implemented forsterite app">
       <option name="closed" value="true" />
-      <created>1745407327263</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
+      <created>1754649906661</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
       <option name="project" value="LOCAL" />
-      <updated>1745407327263</updated>
+      <updated>1754649906661</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00049" summary="changes in forsterite dissolution app">
+      <option name="closed" value="true" />
+      <created>1754650324049</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1754650324049</updated>
+    </task>
+    <task id="LOCAL-00050" summary="change in home layout">
+      <option name="closed" value="true" />
+      <created>1754650610921</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1754650610922</updated>
+    </task>
+    <task id="LOCAL-00051" summary="including background image to home">
+      <option name="closed" value="true" />
+      <created>1754653170775</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1754653170775</updated>
+    </task>
+    <task id="LOCAL-00052" summary="adding rate output to app">
+      <option name="closed" value="true" />
+      <created>1754925775270</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1754925775270</updated>
+    </task>
+    <task id="LOCAL-00053" summary="new background images">
+      <option name="closed" value="true" />
+      <created>1755172947661</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1755172947661</updated>
+    </task>
+    <task id="LOCAL-00054" summary="new seawater app implemented">
+      <option name="closed" value="true" />
+      <created>1755188031401</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1755188031401</updated>
+    </task>
+    <task id="LOCAL-00055" summary="changed yaxis and xaxis of mineral dissolution apps">
+      <option name="closed" value="true" />
+      <created>1755188713703</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1755188713704</updated>
+    </task>
+    <task id="LOCAL-00056" summary="added a whole new app pCO2-DIc to the website (dic_pco2_layout())">
+      <option name="closed" value="true" />
+      <created>1764154027708</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1764154027709</updated>
+    </task>
+    <task id="LOCAL-00057" summary="added a whole new app pCO2-DIc to the website (dic_pco2_layout())">
+      <option name="closed" value="true" />
+      <created>1764154109577</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1764154109578</updated>
+    </task>
+    <task id="LOCAL-00058" summary="changes in design + added a new text for the pCO2 DIC plot">
+      <option name="closed" value="true" />
+      <created>1764155683504</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1764155683504</updated>
+    </task>
+    <task id="LOCAL-00059" summary="changes in design + added a new text for the pCO2 DIC plot">
+      <option name="closed" value="true" />
+      <created>1764160099248</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1764160099248</updated>
+    </task>
+    <task id="LOCAL-00060" summary="changed  CO2 labels and plot height">
+      <option name="closed" value="true" />
+      <created>1764160665778</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1764160665791</updated>
+    </task>
+    <task id="LOCAL-00061" summary="force xaxis labels ion 10 steps">
+      <option name="closed" value="true" />
+      <created>1764160940781</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1764160940781</updated>
+    </task>
+    <task id="LOCAL-00062" summary="update x-axis with 10^x format">
+      <option name="closed" value="true" />
+      <created>1764167641180</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1764167641181</updated>
+    </task>
+    <task id="LOCAL-00063" summary="add text to bjerrum plot app">
+      <option name="closed" value="true" />
+      <created>1764168073582</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1764168073582</updated>
+    </task>
+    <task id="LOCAL-00064" summary="removed the plot title and adjustede plot margins">
+      <option name="closed" value="true" />
+      <created>1764170462866</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1764170462866</updated>
+    </task>
+    <task id="LOCAL-00065" summary="corrected thge fontsize of the pCO2 app and corrected the titles">
+      <option name="closed" value="true" />
+      <created>1764171680637</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1764171680637</updated>
+    </task>
+    <task id="LOCAL-00066" summary="corrected thge fontsize of the pCO2 app and corrected the titles">
+      <option name="closed" value="true" />
+      <created>1764172017437</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1764172017437</updated>
+    </task>
+    <task id="LOCAL-00067" summary="corrected thge fontsize of the pCO2 app and corrected the titles">
+      <option name="closed" value="true" />
+      <created>1764172051784</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1764172051784</updated>
+    </task>
+    <task id="LOCAL-00068" summary="chnaged style settings in the pCO2 app">
+      <option name="closed" value="true" />
+      <created>1764172269478</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1764172269478</updated>
+    </task>
+    <task id="LOCAL-00069" summary="moved legend inside the plot in the pCO2 app">
+      <option name="closed" value="true" />
+      <created>1764173435503</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1764173435503</updated>
+    </task>
+    <task id="LOCAL-00070" summary="moved legend inside the plot in the pCO2 app (again)">
+      <option name="closed" value="true" />
+      <created>1764173477662</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1764173477662</updated>
+    </task>
+    <task id="LOCAL-00071" summary="also uplaod the database files (the owen edited database files)">
+      <option name="closed" value="true" />
+      <created>1764174484324</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1764174484324</updated>
+    </task>
+    <task id="LOCAL-00072" summary="move legend in bjerrum plot app inside the plot">
+      <option name="closed" value="true" />
+      <created>1764174813770</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1764174813770</updated>
+    </task>
+    <task id="LOCAL-00073" summary="make TA line in the pCO2 plot dashed">
+      <option name="closed" value="true" />
+      <created>1764175085050</created>
+      <option name="number" value="00073" />
+      <option name="presentableId" value="LOCAL-00073" />
+      <option name="project" value="LOCAL" />
+      <updated>1764175085050</updated>
+    </task>
+    <task id="LOCAL-00074" summary="make TA line in the pCO2 plot dotted">
+      <option name="closed" value="true" />
+      <created>1764175618948</created>
+      <option name="number" value="00074" />
+      <option name="presentableId" value="LOCAL-00074" />
+      <option name="project" value="LOCAL" />
+      <updated>1764175618948</updated>
+    </task>
+    <option name="localTasksCounter" value="75" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -370,22 +601,34 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="make the app work" />
-    <MESSAGE value="upload new app" />
-    <MESSAGE value="last update from lukas for today" />
-    <MESSAGE value="some README update" />
-    <MESSAGE value="updated the .html files with datenschutz etc" />
-    <MESSAGE value="updated the README" />
-    <MESSAGE value="updated the plot size and oder" />
-    <MESSAGE value="updated legend on the graph and ion notation" />
-    <MESSAGE value="new table header with superscripts" />
-    <MESSAGE value="added cations and anions blocks" />
-    <MESSAGE value="made website more safe (dont allow comma in input and say error otherwise)" />
-    <MESSAGE value="changes home layout texts" />
-    <MESSAGE value="edited README" />
-    <option name="LAST_COMMIT_MESSAGE" value="edited README" />
+    <MESSAGE value="Updated README.md file" />
+    <MESSAGE value="implemented forsterite app" />
+    <MESSAGE value="changes in forsterite dissolution app" />
+    <MESSAGE value="change in home layout" />
+    <MESSAGE value="including background image to home" />
+    <MESSAGE value="adding rate output to app" />
+    <MESSAGE value="new background images" />
+    <MESSAGE value="new seawater app implemented" />
+    <MESSAGE value="changed yaxis and xaxis of mineral dissolution apps" />
+    <MESSAGE value="added a whole new app pCO2-DIc to the website (dic_pco2_layout())" />
+    <MESSAGE value="changes in design + added a new text for the pCO2 DIC plot" />
+    <MESSAGE value="changed  CO2 labels and plot height" />
+    <MESSAGE value="force xaxis labels ion 10 steps" />
+    <MESSAGE value="update x-axis with 10^x format" />
+    <MESSAGE value="add text to bjerrum plot app" />
+    <MESSAGE value="removed the plot title and adjustede plot margins" />
+    <MESSAGE value="corrected the markdown text using proper subscripts" />
+    <MESSAGE value="corrected thge fontsize of the pCO2 app and corrected the titles" />
+    <MESSAGE value="chnaged style settings in the pCO2 app" />
+    <MESSAGE value="moved legend inside the plot in the pCO2 app" />
+    <MESSAGE value="moved legend inside the plot in the pCO2 app (again)" />
+    <MESSAGE value="also uplaod the database files (the owen edited database files)" />
+    <MESSAGE value="move legend in bjerrum plot app inside the plot" />
+    <MESSAGE value="make TA line in the pCO2 plot dashed" />
+    <MESSAGE value="make TA line in the pCO2 plot dotted" />
+    <option name="LAST_COMMIT_MESSAGE" value="make TA line in the pCO2 plot dotted" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1734089994757" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
+    <SUITE FILE_PATH="coverage/multipage_website$multipage_website.coverage" NAME="multipage_website Coverage Results" MODIFIED="1764343677255" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
 </project>

@@ -9,7 +9,7 @@ https://community.plotly.com/t/dash-pythonanywhere-deployment-issue/5062
 
 """
 import os, flask, pandas as pd, phreeqpython, plotly.graph_objects as go
-from dash import Dash, html, dcc, dash_table, ctx 
+from dash import Dash, html, dcc, dash_table, ctx, ALL
 from dash.dash_table import Format
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
@@ -21,7 +21,8 @@ from collections import defaultdict
 from dash.exceptions import PreventUpdate
 from queue import Queue
 from contextlib import contextmanager
-
+import PyCO2SYS as pyco2
+from pathlib import Path
 # ─────────────────────────────  CONSTANTS & STYLES  ──────────────────────────
 MAX_WIDTH = "1160px"   # global content width (≈ 12‑col Bootstrap container)
 PAD_Y     = "2rem"     # vertical padding for header / page bottom
@@ -44,7 +45,10 @@ app = Dash(
 app.title = "Modeling Tools for Geochemistry"
 
 # strip Dash's default footer
-app.index_string = """<!DOCTYPE html><html lang=\"en\"><head>{%metas%}<title>{%title%}</title>{%favicon%}{%css%}</head><body>{%app_entry%}{%config%}{%scripts%}{%renderer%}</body></html>"""
+#app.index_string = """<!DOCTYPE html><html lang=\"en\"><head>{%metas%}<title>{%title%}</title>{%favicon%}{%css%}</head><body>{%app_entry%}{%config%}{%scripts%}{%renderer%}</body></html>"""
+
+# new app index string fiyx by lukas without escape quotes
+app.index_string = """<!DOCTYPE html><html lang="en"><head>{%metas%}<title>{%title%}</title>{%favicon%}{%css%}</head><body>{%app_entry%}{%config%}{%scripts%}{%renderer%}</body></html>"""
 
 # ─────────────────────────────  PATHS & HELPERS  ─────────────────────────────
 BASE_DIR  = os.path.dirname(os.path.realpath(__file__))
@@ -60,8 +64,16 @@ REFS_MD       = read_asset("references.md")
 SOME_TEXT_MD  = read_asset("sometext.md")
 INPUT_BOX_MD  = read_asset("Textbox_input.md")
 OUTPUT_BOX_MD = read_asset("Textbox_output.md")
+CBE_CALCULATION_MD = read_asset("CBE_calc_text.md")
+PCO2_DIC_TEXT_MD = read_asset("pCO2-DIC.md")
+REFS_CBE_MD = read_asset("references_CBE.md")
+
+# for new apps
+
+
 
 IMAGE_LOGO    = "/assets/uhh-logo-web.jpg"   # served by Dash `/assets` route
+BACKGROUND_IMAGE = "/assets/background_image.jpg"   # served by Dash `/assets` route
 
 # ─────────────────────────────  SHARED UI COMPONENTS  ───────────────────────
 
@@ -665,7 +677,8 @@ def calc_layout() -> html.Div:
         SiteHeader("Alkalinity Tool", [("Home", "/"), ("Alkalinity Tool", "/carbonate-system-modeling")]),
         html.Div(id="subpage-content", children=page1_layout),
         Footer(),
-    ])
+    ]
+)
 
 # toggle Table / Graph sub‑pages
 @app.callback(Output("subpage-content", "children"),
@@ -703,6 +716,9 @@ def _hero_card(title: str, desc: str, href: str) -> dbc.Card:
         style={"borderRadius": "1rem", "padding": "1.5rem", "maxWidth": "340px"},
     )
 
+
+# Here one must include the new applications and the sublink
+
 def home_layout() -> html.Div:
     hero = html.Div(
         [
@@ -730,6 +746,17 @@ def home_layout() -> html.Div:
                     ),
                     dbc.Col(
                         _hero_card(
+                            "Seawater Carbonate System Calculator",
+                            "Compute open-system carbonate speciation in seawater (PyCO2SYS)",
+                            "/carbonate-system-modeling-seawater"
+                            ,
+                        ),
+                        md=6,
+                        lg=4,
+                        class_name="mb-4",
+                    ),
+                    dbc.Col(
+                        _hero_card(
                             "Charge Balance",
                             "Check major-ion analyses for electrical neutrality and flag errors over ±5 %.",
                             "/charge-balance",
@@ -748,14 +775,61 @@ def home_layout() -> html.Div:
                         lg=4,
                         class_name="mb-4",
                     ),
-                ],
+                    dbc.Col(
+                        _hero_card(
+                            "Mineral Dissolution Simulation",
+                            "Lifetime of a spherical crystal in water at pH=5 T=25°C",
+                            "/mineral-dissolution",
+                        ),
+                        md=6,
+                        lg=4,
+                        class_name="mb-4",
+                    ),
+                    dbc.Col(
+                        _hero_card(
+                            ["Forsterite Dissolution",
+                                html.Br(),
+                                "f(pH, T, size)"
+                                ],
+                            "Forsterite dissolution model dependent on pH, temperature, and crystal radius.",
+                            "/forsterite-dissolution",
+                        ),
+                        md=6,
+                        lg=4,
+                        class_name="mb-4",
+                    ),
+                    dbc.Col(
+                        _hero_card(
+                            "Bjerrum Plot Explorer",
+                            "Bjerrum plots of selected organic acids and carbonic acid",
+                            "/bjerrum-plot-explorer",
+                        ),
+                        md=6,
+                        lg=4,
+                        class_name="mb-4",
+                    ),
+                    dbc.Col(
+                        _hero_card(
+                            "DIC-pCO2 relationship",
+                            "pCO2 and DIC relationship for different TA",
+                            "/dic-pCO2",
+                        ),
+                        md=6,
+                        lg=4,
+                        class_name="mb-4",
+                    ),
+                    ],
                 class_name="g-4 justify-content-center mt-4",
                 ),
             ),
         ],
         className="text-center py-5 px-3",
         style={
-            "background": "linear-gradient(135deg,#149c7d 0%,#0d7359 100%)"
+            "backgroundImage": "url('/assets/background_image.jpg')",
+            "backgroundSize": "cover",
+            "backgroundPosition": "center",
+            "backgroundRepeat": "no-repeat",
+            #"background": "linear-gradient(135deg,#149c7d 0%,#0d7359 100%)"
         },
     )
 
@@ -906,37 +980,58 @@ FULL_OPTIONS: list[dict] = [
 ]
 
 # ─────────────────────────────────────────────────────────────────────────────
+
+
+
 def xrf_layout() -> html.Div:
     return html.Div(
         [
-            SiteHeader(
-                "XRF Mineral Oxides",
-                [("Home", "/"), ("XRF Mineral Oxides", "/xrf")],
+            # Wrap SiteHeader in a div with background
+            html.Div(
+                SiteHeader(
+                    "XRF Mineral Oxides",
+                    [("Home", "/"), ("XRF Mineral Oxides", "/xrf")],
+                ),
+                style={
+                    "background-color": "rgba(255, 255, 255, 0.9)",  # semi-transparent white
+                    "padding": "1rem 2rem",
+                    "border-radius": "1rem",
+                    "margin": "1rem 0",
+                },
             ),
+
             dbc.Container(
                 [
-                    html.H2("Mineral Formula Selector", className="mt-4"),
-                    html.P(
-                        "Start typing a mineral name or its formula. "
-                        "The first 50 matches are shown instantly in the dropdown.",
-                        className="my-4 text-muted",
-                    ),
-                    # full option list lives only in the browser
-                    dcc.Store(id="xrf-options-store", data=FULL_OPTIONS),
-                    dcc.Dropdown(
-                        id          = "xrf-formula",
-                        options     = FULL_OPTIONS,            # full list available immediately
-                        value       = FULL_OPTIONS[0]["value"],# pre-select first mineral → table shows on load
-                        searchable  = True,
-                        clearable   = False,
-                        placeholder = "Start typing …",
-                        style       = {"width": "100%"},
-                        className   = "mb-4",
-                    ),
-                    dbc.Card(
-                        dbc.CardBody(html.Div(id="xrf-table")),
-                        class_name="shadow-sm",
-                        style={"borderRadius": "1rem"},
+                    html.Div(
+                        [
+                            html.H2("Mineral Formula Selector", className="mt-4"),
+                            html.P(
+                                "Start typing a mineral name or its formula. "
+                                "The first 50 matches are shown instantly in the dropdown.",
+                                className="my-4 text-muted",
+                            ),
+                            dcc.Store(id="xrf-options-store", data=FULL_OPTIONS),
+                            dcc.Dropdown(
+                                id="xrf-formula",
+                                options=FULL_OPTIONS,
+                                value=FULL_OPTIONS[0]["value"],
+                                searchable=True,
+                                clearable=False,
+                                placeholder="Start typing …",
+                                style={"width": "100%"},
+                                className="mb-4",
+                            ),
+                            dbc.Card(
+                                dbc.CardBody(html.Div(id="xrf-table")),
+                                class_name="shadow-sm",
+                                style={"borderRadius": "1rem"},
+                            ),
+                        ],
+                        style={
+                            "background-color": "rgba(255, 255, 255, 0.9)",  # semi-transparent white
+                            "padding": "2rem",
+                            "border-radius": "1rem",
+                        },
                     ),
                 ],
                 style={
@@ -946,8 +1041,18 @@ def xrf_layout() -> html.Div:
                 },
             ),
             Footer(),
-        ]
+        ],
+        style={
+            "background-image": "url('/assets/background_image.jpg')",
+            "background-size": "cover",
+            "background-repeat": "no-repeat",
+            "background-position": "center center",
+            "min-height": "100vh",
+            "width": "100%",
+        }
     )
+
+
 
 # ── super-light client-side filter (fast even on >5 000 minerals) ───────────
 app.clientside_callback(
@@ -1027,11 +1132,1269 @@ def _update_xrf(formula):
 
     return make_table2(pd.DataFrame(rows), id="xrf-dt")
 
+
+# ────────────────────────────────────────────────────────────────────────────
+# 1️⃣  Seawater Carbonate System Speciation app
+# ────────────────────────────────────────────────────────────────────────────
+PARAMS = ['pH', 'TA', 'DIC', 'pCO2', 'Temperature']
+PARAM_MAP = {'TA':1, 'DIC':2, 'pH':3, 'pCO2':4, 'Temperature':None}
+
+def default_value_for(param: str):
+    return {'TA':2000,'DIC':2000,'pH':8.10,'pCO2':420.0,'Temperature':25.0}.get(param,0)
+
+def step_for(param: str):
+    return {'TA':1,'DIC':1,'pH':0.01,'pCO2':1.0,'Temperature':0.1}.get(param,0.01)
+
+def label_unit_for(param: str):
+    return {'TA':'(µmol/kg)','DIC':'(µmol/kg)','pH':'','pCO2':'(µatm)','Temperature':'(°C)'}.get(param,'')
+
+def make_table(df: pd.DataFrame, *, id: str, exponent: bool = False) -> dash_table.DataTable:
+    num_fmt = Format.Format(precision=4, scheme=Format.Scheme.exponent if exponent else Format.Scheme.decimal, trim=True)
+    return dash_table.DataTable(
+        id=id,
+        columns=[{"name": c, "id": c, "type": "numeric", "format": num_fmt} for c in df.columns],
+        data=df.to_dict("records"),
+        editable=False,
+        style_table={"width": "100%", "overflowX": "auto", "margin": "0 auto"},
+        style_header={"backgroundColor": "#f8f9fa","fontWeight":600,"padding":"10px"},
+        style_cell={"padding":"8px 10px","textAlign":"right","fontSize":"1rem","minWidth":"80px"},
+        style_data_conditional=[]
+    )
+
+
+def seawater_layout():
+    return html.Div(
+        [   # Wrap SiteHeader in a div with background
+            html.Div(
+                SiteHeader(
+                    "Seawater Carbonate System Calculation",
+                    [("Home", "/"), ("Seawater Carbonate System Calculation", "/seawater")],
+                ),
+                style={
+                    "background-color": "rgba(255, 255, 255, 0.9)",  # semi-transparent white
+                    "padding": "1rem 2rem",
+                    "border-radius": "1rem",
+                    "margin": "1rem 0",
+                },
+            ),
+
+            # Content container
+            dbc.Container(
+                [
+                    html.H2("Seawater Carbonate System Calculation", className="text-center my-4"),
+
+                    html.Div(
+                        [
+                            html.Div([
+                                html.Label("Select parameter 1"),
+                                dcc.Dropdown(
+                                    id='param1-dd',
+                                    options=[{'label': p, 'value': p} for p in PARAMS],
+                                    value='pH',
+                                    clearable=False
+                                )
+                            ], style={'width': '32%'}),
+
+                            html.Div([
+                                html.Label("Select parameter 2"),
+                                dcc.Dropdown(
+                                    id='param2-dd',
+                                    options=[{'label': p, 'value': p} for p in PARAMS],
+                                    value='TA',
+                                    clearable=False
+                                )
+                            ], style={'width': '32%'}),
+
+                            html.Div([
+                                html.Label("Select parameter 3"),
+                                dcc.Dropdown(
+                                    id='param3-dd',
+                                    options=[{'label': p, 'value': p} for p in PARAMS],
+                                    value='Temperature',
+                                    clearable=False
+                                )
+                            ], style={'width': '32%'}),
+                        ],
+                        style={
+                            'display': 'flex',
+                            'gap': '2%',
+                            'marginBottom': '1rem',
+                            'justifyContent': 'center'
+                        }
+                    ),
+
+                    html.Div(
+                        id='inputs-container',
+                        style={
+                            'display': 'grid',
+                            'gridTemplateColumns': 'repeat(3, 1fr)',
+                            'gap': '1rem'
+                        }
+                    ),
+
+                    html.Div(
+                        [
+                            dcc.Input(
+                                id='salinity-input',
+                                type='number',
+                                value=35.0,
+                                step=0.1,
+                                style={'width': '120px', 'marginRight': '0.5rem'}
+                            ),
+                            html.Label("Salinity (PSU)")
+                        ],
+                        style={'marginTop': '0.75rem', 'textAlign': 'center'}
+                    ),
+
+                    html.Button(
+                        'Calculate',
+                        id='calculate-btn',
+                        n_clicks=0,
+                        style={'marginTop': '1rem'}
+                    ),
+
+                    html.Hr(),
+
+                    html.Div(
+                        id='note-container',
+                        style={'color': '#666', 'marginBottom': '0.5rem'}
+                    ),
+                    html.Div(id='results-container')
+                ],
+                fluid=True,
+                className="d-flex flex-column align-items-center",
+                style={
+                    "background-color": "rgba(255, 255, 255, 0.9)",  # semi-transparent white
+                    "padding": "2rem",
+                    "border-radius": "1rem",
+                },
+            ),
+
+            Footer()
+        ],
+        style={
+            'backgroundImage': 'url("/assets/seawater_2.jpg")',  # store image in assets/
+            'backgroundSize': 'cover',
+            'backgroundPosition': 'center',
+            'minHeight': '100vh',
+            'padding': '20px'
+        }
+    )
+
+
+
+'''
+def seawater_layout():
+    return html.Div([
+        SiteHeader(
+            "Seawater Carbonate System Calculation",
+            [("Home", "/"), ("Seawater Carbonate System Calculation", "/seawater")]
+        ),
+
+        dbc.Container([
+            html.H2("Seawater Carbonate System Calculation", className="text-center my-4"),
+
+            html.Div([
+                html.Div([
+                    html.Label("Select parameter 1"),
+                    dcc.Dropdown(
+                        id='param1-dd',
+                        options=[{'label': p, 'value': p} for p in PARAMS],
+                        value='pH',
+                        clearable=False
+                    )
+                ], style={'width': '32%'}),
+                html.Div([
+                    html.Label("Select parameter 2"),
+                    dcc.Dropdown(
+                        id='param2-dd',
+                        options=[{'label': p, 'value': p} for p in PARAMS],
+                        value='TA',
+                        clearable=False
+                    )
+                ], style={'width': '32%'}),
+                html.Div([
+                    html.Label("Select parameter 3"),
+                    dcc.Dropdown(
+                        id='param3-dd',
+                        options=[{'label': p, 'value': p} for p in PARAMS],
+                        value='Temperature',
+                        clearable=False
+                    )
+                ], style={'width': '32%'}),
+            ], style={'display': 'flex', 'gap': '2%', 'marginBottom': '1rem'}),
+
+            html.Div(
+                id='inputs-container',
+                style={'display': 'grid', 'gridTemplateColumns': 'repeat(3,1fr)', 'gap': '1rem'}
+            ),
+
+            html.Div([
+                dcc.Input(
+                    id='salinity-input',
+                    type='number',
+                    value=35.0,
+                    step=0.1,
+                    style={'width': '120px', 'marginRight': '0.5rem'}
+                ),
+                html.Label("Salinity (PSU)")
+            ], style={'marginTop': '0.75rem'}),
+
+            html.Button(
+                'Calculate',
+                id='calculate-btn',
+                n_clicks=0,
+                style={'marginTop': '1rem'}
+            ),
+            html.Hr(),
+            html.Div(
+                id='note-container',
+                style={'color': '#666', 'marginBottom': '0.5rem'}
+            ),
+            html.Div(id='results-container')
+        ], fluid=True, className="d-flex flex-column align-items-center"),
+
+        Footer(),
+
+    ],
+    style={
+        'backgroundImage': 'url("/assets/waterfall.jpg")',  # store image in assets/
+        'backgroundSize': 'cover',
+        'backgroundPosition': 'center',
+        'minHeight': '100vh',
+        'padding': '20px'
+        }
+    )
+    
+'''
+
+'''
+def seawater_layout():
+    return dbc.Container([
+        html.H2("Seawater / Carbonate System", className="text-center my-4"),
+
+        html.Div([
+            html.Div([
+                html.Label("Select parameter 1"),
+                dcc.Dropdown(id='param1-dd', options=[{'label': p,'value':p} for p in PARAMS],
+                             value='pH', clearable=False)
+            ], style={'width':'32%'}),
+            html.Div([
+                html.Label("Select parameter 2"),
+                dcc.Dropdown(id='param2-dd', options=[{'label': p,'value':p} for p in PARAMS],
+                             value='TA', clearable=False)
+            ], style={'width':'32%'}),
+            html.Div([
+                html.Label("Select parameter 3"),
+                dcc.Dropdown(id='param3-dd', options=[{'label': p,'value':p} for p in PARAMS],
+                             value='Temperature', clearable=False)
+            ], style={'width':'32%'}),
+        ], style={'display':'flex','gap':'2%','marginBottom':'1rem'}),
+
+        html.Div(id='inputs-container',
+                 style={'display':'grid','gridTemplateColumns':'repeat(3,1fr)','gap':'1rem'}),
+
+        html.Div([
+            dcc.Input(id='salinity-input', type='number', value=35.0, step=0.1,
+                      style={'width':'120px','marginRight':'0.5rem'}),
+            html.Label("Salinity (PSU)")
+        ], style={'marginTop':'0.75rem'}),
+
+        html.Button('Calculate', id='calculate-btn', n_clicks=0, style={'marginTop':'1rem'}),
+        html.Hr(),
+        html.Div(id='note-container', style={'color':'#666','marginBottom':'0.5rem'}),
+        html.Div(id='results-container')
+    ], fluid=True, className="d-flex flex-column align-items-center"),
+'''
+
+# ─────────── Render dynamic numeric inputs ───────────
+@app.callback(
+    Output('inputs-container','children'),
+    Input('param1-dd','value'),
+    Input('param2-dd','value'),
+    Input('param3-dd','value')
+)
+def render_inputs(p1, p2, p3):
+    chosen = [p1,p2,p3]
+    children = []
+    for p in chosen:
+        children.append(html.Div([
+            html.Label(f"{p} {label_unit_for(p)}"),
+            dcc.Input(id={'type':'carbonate-input','param':p},
+                      type='number', value=default_value_for(p), step=step_for(p),
+                      style={'width':'100%'})
+        ]))
+    return children
+
+# ─────────── Calculate PyCO2SYS ───────────
+@app.callback(
+    Output('results-container','children'),
+    Output('note-container','children'),
+    Input('calculate-btn','n_clicks'),
+    State('param1-dd','value'),
+    State('param2-dd','value'),
+    State('param3-dd','value'),
+    State({'type':'carbonate-input','param':ALL},'value'),
+    State({'type':'carbonate-input','param':ALL},'id'),
+    State('salinity-input','value'),
+    prevent_initial_call=True
+)
+def calculate_carbonate_system(n_clicks, p1, p2, p3, values, ids, salinity):
+    chosen = [p1,p2,p3]
+    input_dict = {id['param']: val for id,val in zip(ids,values)}
+    notes = []
+
+    if 'Temperature' in input_dict:
+        temperature = input_dict['Temperature']
+    else:
+        temperature = 25.0
+        notes.append("Note: Temperature not selected; using 25°C")
+
+    # Determine first two carbonate params for PyCO2SYS
+    carbonate_names = [p for p in chosen if p != 'Temperature']
+    if len(carbonate_names)<2:
+        return html.Div([html.B("Error:"),"Please select at least two carbonate parameters"]), "; ".join(notes)
+    if len(carbonate_names)>2:
+        notes.append(f"Ignoring third parameter {carbonate_names[2]}")
+        carbonate_names = carbonate_names[:2]
+
+    par1_name, par2_name = carbonate_names
+    par1_type, par2_type = PARAM_MAP[par1_name], PARAM_MAP[par2_name]
+    par1_val, par2_val = input_dict[par1_name], input_dict[par2_name]
+
+    try:
+        results = pyco2.sys(par1_type=par1_type, par1=par1_val,
+                             par2_type=par2_type, par2=par2_val,
+                             temperature=temperature, salinity=salinity)
+
+        # Separate concentration vs other parameters
+        selected_vars = ["pH_total","TA","CO2","CO3","OH","Hfree","bicarbonate","carbonate","total_calcium","dic","pCO2"]
+        other_vars = ["saturation_calcite","saturation_aragonite","pH"]
+
+        filtered_results = {k:v for k,v in results.items() if k in selected_vars}
+        other_results = {k:v for k,v in results.items() if k in other_vars}
+
+        # Build tables
+        table_umol = make_table(pd.DataFrame(list(filtered_results.items()), columns=["Parameter","Value (µmol/kg)"]),
+                                id="table-umol")
+        table_other = make_table(pd.DataFrame(list(other_results.items()), columns=["Parameter","Value"]),
+                                 id="table-other")
+
+        return html.Div([
+            html.H4("Calculated Carbonate System"),
+            html.H5("Concentrations"),
+            table_umol,
+            html.H5("Other Parameters"),
+            table_other
+        ]), "; ".join(notes)
+
+    except Exception as e:
+        return html.Div([html.B("Error:"), str(e)]), "; ".join(notes)
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# 1️⃣  Mineral Crystal Sphere dissolution app
+# ────────────────────────────────────────────────────────────────────────────
+
+# Load data
+
+#fix the data load
+df_mineral = pd.read_excel(
+    os.path.join(filepath, 'assets/mineral_lifetimes_lasaga_1994.xlsx'),
+    engine='openpyxl')
+
+df_mineral['MolarVolume_m3'] = df_mineral['Mol. vol. (cm³/mol)'] * 1e-6
+df_mineral['Rate'] = 10 ** df_mineral['Log rate (mol/m²/s)']
+
+
+equations_md = read_asset("equations_lasaga.md")
+references_md = read_asset("references_lasaga.md")
+
+def mineral_layout():
+    return html.Div(
+        [
+            html.Div(  # centered content container
+                [
+                    SiteHeader(
+                        "Mineral Dissolution",
+                        [("Home", "/"), ("Mineral Dissolution", "/mineral-dissolution")],
+                    ),
+
+                    html.H1("Mineral Dissolution Model (rates for pH=5 T=25°C)"),
+                    dcc.Markdown(equations_md, mathjax=True),
+
+                    html.Label(
+                        "Select mineral:",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginBottom": "10px"
+                        }
+                    ),
+                    dcc.Dropdown(
+                        id='mineral-dropdown',
+                        options=[{'label': m, 'value': m} for m in df_mineral['Mineral']],
+                        value=df_mineral['Mineral'].iloc[11]
+                    ),
+
+                    html.Div(
+                        [
+                            html.Label(
+                                "Initial crystal radius (µm):",
+                                style={
+                                    "fontSize": "20px",
+                                    "fontWeight": "bold",
+                                    "color": "#1a73e8",
+                                    "backgroundColor": "#e8f0fe",
+                                    "padding": "5px 10px",
+                                    "borderRadius": "5px",
+                                    "display": "inline-block",
+                                    "marginTop": "20px",  # whitespace above
+                                    "marginBottom": "10px",  # whitespace below
+                                }
+                            ),
+                            dcc.Slider(
+                                id='radius-slider',
+                                min=1, max=1000, step=10, value=100,
+                                marks={i: f"{i} µm" for i in [1, 50, 100, 250, 500, 750, 1000]},
+                                tooltip={"placement": "bottom", "always_visible": False},
+                                updatemode='drag',
+                                vertical=False,
+                                # add margin around the slider for whitespace
+                                className="my-3"  # or use style={"marginTop": "10px", "marginBottom": "20px"}
+                            )
+                        ],
+                        style={"width": "90%", "maxWidth": "600px"}
+                    ),
+
+
+                    dcc.Graph(id='dissolution-plot'),
+
+                    html.Hr(),
+                    html.H2("References"),
+                    dcc.Markdown(references_md),
+                ],
+                style={
+                    "maxWidth": "1000px",
+                    "margin": "0 auto",
+                    "padding": "20px"
+                },
+            ),
+
+            # Footer outside the centered div to span full width
+            Footer(),
+        ],
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "minHeight": "100vh",
+        },
+    )
+
+
+@app.callback(
+    Output('dissolution-plot', 'figure'),
+    [Input('mineral-dropdown', 'value'), Input('radius-slider', 'value')]
+)
+
+def update_plot(selected_mineral, radius_um):
+    # Extract values
+    row = df_mineral[df_mineral['Mineral'] == selected_mineral].iloc[0]
+    R = row['Rate']
+    Vm = row['MolarVolume_m3']
+    r0 = radius_um * 1e-6  # µm to m
+
+    # Time to full dissolution
+    t_dissolve = r0 / (R * Vm)
+
+    # Time array
+    time = np.linspace(0, t_dissolve, 1000)
+    r_t = r0 - R * Vm * time
+    V_t = (4/3) * np.pi * np.clip(r_t, 0, None)**3
+    n_t = V_t / Vm
+
+    # Convert time to years
+    time_years = time / (3600 * 24 * 365.25)
+
+    # Plotly with multiple y-axes
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=time_years, y=V_t,
+        name='Volume (m³)',
+        yaxis='y',
+        line=dict(color='blue')
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=time_years, y=r_t * 1e6,
+        name='Radius (µm)',
+        yaxis='y2',
+        line=dict(color='green')
+    ))
+
+    # Add annotation for full dissolution time
+    fig.add_annotation(
+        text=f"Full dissolution time: {t_dissolve / (3600 * 24 * 365.25):.2f} years",
+        xref="paper", yref="paper",
+        x=0.05, y=0.05,  # bottom-left corner
+        showarrow=False,
+        font=dict(size=20, color="gray"),
+        align="left",
+        bordercolor="lightgray",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="white",
+        opacity=1
+    )
+
+
+    fig.update_layout(
+        title=f"Dissolution of {selected_mineral} crystal r<sub>0</sub> ={radius_um} µm<br>resulting log dissolution rate: {np.log10(R):.3f} log10(mol/m²/s)",
+        xaxis=dict(title='Time (years)',
+                   exponentformat='e',  # use scientific notation like 1e+03
+                   showexponent='all' ), # always show the exponent),
+
+        yaxis=dict(
+            title=dict(text='Volume (m³)', font=dict(color='blue')),
+            tickfont=dict(color='blue'),
+            exponentformat='e',  # use scientific notation like 1e+03
+            showexponent='all'  # always show the exponent
+        ),
+        yaxis2=dict(
+            title=dict(text='Radius (µm)', font=dict(color='green')),
+            overlaying='y',
+            side='right',
+            tickfont=dict(color='green')
+        ),
+
+
+        legend=dict(x=0.7, y=0.99),
+        template='simple_white'
+    )
+
+
+
+    return fig
+
+
+# ────────────────────────────────────────────────────────────────────────────
+# 1️⃣  Forsterite Dissolution app
+# ────────────────────────────────────────────────────────────────────────────
+text_forsterite = read_asset("text_forsterite.md")
+references_forsterite = read_asset("references_forsterite.md")
+
+
+def forsterite_dissolution_layout():
+    return html.Div(
+        [
+            html.Div(  # centered content container
+                [
+                    SiteHeader(
+                        "Forsterite Dissolution f(pH, T, r)",
+                        [("Home", "/"), ("Forsterite Dissolution", "/forsterite-dissolution")],
+                    ),
+
+                    html.H1("Forsterite Dissolution Model"),
+
+                    dcc.Markdown(text_forsterite,
+                        mathjax=True
+                    ),
+
+                    # pH slider label and slider
+                    html.Label(
+                        "pH:",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginTop": "20px",
+                            "marginBottom": "10px",
+                        }
+                    ),
+                    dcc.Slider(
+                        id='ph-slider',
+                        min=0,
+                        max=14,
+                        step=0.1,
+                        value=5,
+                        marks={i: str(i) for i in range(0, 15)},
+                        tooltip={"placement": "bottom", "always_visible": False},
+                        updatemode='drag',
+                        className="my-3",
+                    ),
+
+                    # Temperature slider label and slider
+                    html.Label(
+                        "Temperature (°C):",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginTop": "20px",
+                            "marginBottom": "10px",
+                        }
+                    ),
+                    dcc.Slider(
+                        id='temp-slider',
+                        min=0,
+                        max=150,
+                        step=1,
+                        value=25,
+                        marks={i: str(i) for i in range(0, 151, 20)},
+                        tooltip={"placement": "bottom", "always_visible": False},
+                        updatemode='drag',
+                        className="my-3",
+                    ),
+
+                    # Crystal size slider (like before)
+                    html.Label(
+                        "Initial crystal radius (µm):",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginTop": "20px",
+                            "marginBottom": "10px",
+                        }
+                    ),
+                    dcc.Slider(
+                        id='radius-slider',
+                        min=1,
+                        max=1000,
+                        step=10,
+                        value=100,
+                        marks={i: f"{i} µm" for i in [1, 50, 100, 250, 500, 750, 1000]},
+                        tooltip={"placement": "bottom", "always_visible": False},
+                        updatemode='drag',
+                        className="my-3",
+                    ),
+
+                    dcc.Graph(id='forsterite-dissolution-plot'),
+
+                    html.Hr(),
+                    html.H2("References"),
+                    dcc.Markdown(references_forsterite),
+                ],
+                style={
+                    "maxWidth": "1000px",
+                    "margin": "0 auto",
+                    "padding": "20px"
+                },
+            ),
+
+            Footer(),  # full width footer outside centered container
+        ],
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "minHeight": "100vh",
+        },
+    )
+
+
+# Placeholder callback
+@app.callback(
+    Output('forsterite-dissolution-plot', 'figure'),
+    Input('ph-slider', 'value'),
+    Input('temp-slider', 'value'),
+    Input('radius-slider', 'value'),
+)
+def update_forsterite_plot(pH, temp, radius):
+
+    # dissolution rates for different pH range
+    def rate_low_pH(pH, T_C):
+        """
+        Calculate log10 of forsterite dissolution rate for pH < 5.6
+        T_C: temperature in Celsius
+        Returns log10(rate in mol/m²/s)
+        """
+        T_K = T_C + 273.15  # Convert to Kelvin
+        log_rgeo = 6.05 - 0.46 * pH - (3683.0 / T_K)
+        return log_rgeo
+
+    def rate_high_pH(pH, T_C):
+        """
+        Calculate log10 of forsterite dissolution rate for pH > 5.6
+        T_C: temperature in Celsius
+        Returns log10(rate in mol/m²/s)
+        """
+        T_K = T_C + 273.15
+        log_rgeo = 4.07 - 0.256 * pH - (3465.0 / T_K)
+        return log_rgeo
+
+    def rate_forsterite(pH, T_C):
+        """
+        Determine which equation to use based on pH.
+        Returns log10(rate in mol/m²/s)
+        """
+        if pH <= 5.6:
+            return rate_low_pH(pH, T_C)
+        else:
+            return rate_high_pH(pH, T_C)
+
+    # Extract values
+    log_rate = rate_forsterite(pH, temp)
+    R = 10 ** log_rate  # Convert to mol/m²/s
+    Vm = 43.79 * 1e-6
+    r0 = radius * 1e-6  # µm to m
+
+    # Time to full dissolution
+    t_dissolve = r0 / (R * Vm)
+
+    # Time array
+    time = np.linspace(0, t_dissolve, 1000)
+    r_t = r0 - R * Vm * time
+    V_t = (4 / 3) * np.pi * np.clip(r_t, 0, None) ** 3
+    n_t = V_t / Vm
+
+    # Convert time to years
+    time_years = time / (3600 * 24 * 365.25)
+
+    # Plotly with multiple y-axes
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=time_years, y=V_t,
+        name='Volume (m³)',
+        yaxis='y',
+        line=dict(color='blue')
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=time_years, y=r_t * 1e6,
+        name='Radius (µm)',
+        yaxis='y2',
+        line=dict(color='green')
+    ))
+
+    # Add annotation for full dissolution time
+    fig.add_annotation(
+        text=f"Full dissolution time: {t_dissolve / (3600 * 24 * 365.25):.2f} years",
+        xref="paper", yref="paper",
+        x=0.05, y=0.05,  # bottom-left corner
+        showarrow=False,
+        font=dict(size=20, color="gray"),
+        align="left",
+        bordercolor="lightgray",
+        borderwidth=1,
+        borderpad=4,
+        bgcolor="white",
+        opacity=1
+    )
+
+    fig.update_layout(
+        title=f" Dissolution of Forsterite crystal pH: {pH}, Temp: {temp}°C, Radius: {radius} µm<br>resulting log dissolution rate: {log_rate:.3f} log10(mol/m²/s)",
+        xaxis=dict(title='Time (years)',
+                   exponentformat='e',  # use scientific notation like 1e+03
+                    showexponent='all'),  # always show the exponent),
+
+        yaxis=dict(
+            title=dict(text='Volume (m³)', font=dict(color='blue')),
+            tickfont=dict(color='blue'),
+            exponentformat='e',  # use scientific notation like 1e+03
+            showexponent='all'  # always show the exponent
+        ),
+        yaxis2=dict(
+            title=dict(text='Radius (µm)', font=dict(color='green')),
+            overlaying='y',
+            side='right',
+            tickfont=dict(color='green')
+        ),
+
+        legend=dict(x=0.7, y=0.99),
+        template='simple_white',
+    )
+
+
+    return fig
+
+
+# ────────────────────────────────────────────────────────────────────────────
+#   Bjerrum plot app
+# ────────────────────────────────────────────────────────────────────────────
+
+# resolve relative path to an absolute one
+# db_path = Path.cwd() / "phreeqc_databases" / "vitens_lukas_edit.dat"
+# db_path = Path.cwd() / "phreeqc_databases" / "minteq.v4_lukas_edit.dat"
+
+
+
+# ---------- helpers ----------
+
+def count_protons_in_master(master):
+    """
+    Extract total proton count from master species string, e.g. 'H3(Citrate)' -> 3.
+    """
+    m = re.match(r'H(\d+)\(', master)
+    return int(m.group(1)) if m else 1
+
+
+def count_H_in_species(species, core):
+    """
+    Count how many protons are explicitly attached to the acid core.
+
+    Matches things like:
+        H3(Citrate)-   -> 3
+        H(Citrate)-    -> 1
+        NaH(Citrate)-  -> 1   (ignore leading Na, just look at the H() group)
+        Na2(Citrate)-  -> 0
+        Citrate-3      -> 0
+    """
+    m = re.search(r'(H\d*)\(' + re.escape(core) + r'\)', species)
+    if m:
+        token = m.group(1)
+        return 1 if token == "H" else int(token[1:])
+    return 0
+
+
+def group_by_protons(sol, master_species):
+    """
+    Build a dict {n_H: total_moles} for each protonation state.
+    """
+    core = master_species.split("(")[1].split(")")[0]
+    sums = defaultdict(float)
+
+    for sp, val in sol.species.items():
+        if core in sp:
+            nH = count_H_in_species(sp, core)
+            sums[nH] += val
+    return sums
+
+
+def parse_acid_master(master):
+    """
+    Return (core, n_total_protons) for any acid string.
+    - handles 'H3(Citrate)' pattern automatically
+
+    """
+
+    if "(" in master and ")" in master:
+        core = master.split("(")[1].split(")")[0]
+        m = re.match(r'H(\d+)', master)
+        nH = int(m.group(1)) if m else 1
+        return core, nH
+
+    # last fallback: assume no parentheses, try a single H
+    return master, 1
+
+
+# ---------- main routine ----------
+
+def calculate_bjerrum(acid_species, total_conc=1e-3, pH_range=(0, 14), step=0.1):
+    pHs = np.arange(pH_range[0], pH_range[1] + step, step)
+    records = []
+
+    # Always resolve the file path relative to THIS script's location
+    BASE_DIR = Path(__file__).resolve().parent
+
+
+    db_path = BASE_DIR / "assets" / "phreeqc_databases" / "minteq.v4_with_fix_pH_and_corrected_CO2.dat"
+
+
+    # create the engine using your custom database
+    pp = phreeqpython.PhreeqPython(database=str(db_path))
+
+    sol = pp.add_solution_simple({acid_species: total_conc},
+                                 temperature=20,
+                                 units='mol')
+
+    for ph in pHs:
+        sol.change_ph(ph)
+
+        # spec = sol.species
+        acid_str = acid_species
+        if "(" in acid_str and ")" in acid_str:
+
+            core, n_total = parse_acid_master(acid_species)
+
+            # protonation groups
+            group_sums = group_by_protons(sol, acid_species)
+            for nH in range(n_total + 1):
+                records.append({
+                    "pH": ph,
+                    "kind": "group",
+                    "species": f"H{nH}({core})",
+                    "value": group_sums.get(nH, 0.0) / total_conc
+                })
+
+        elif 'CO3' in acid_str:  # option for carbonic acid
+            co2 = sol.total("CO2", units="mol")  # or "mmol" if you prefer
+            hco3 = sol.total("HCO3", units="mol")
+            co3 = sol.total("CO3", units="mol")
+
+            records.append({"pH": ph, "kind": "group", "species": "CO2(aq)", "value": co2 / total_conc})
+            records.append({"pH": ph, "kind": "group", "species": "HCO3-", "value": hco3 / total_conc})
+            records.append({"pH": ph, "kind": "group", "species": "CO3--", "value": co3 / total_conc})
+
+        else:
+            None
+
+    return pd.DataFrame(records)
+
+
+# acid options
+ACID_OPTIONS = {
+    "Carbonic acid (H2CO3)": "H2CO3",  # depends on DB
+    "Benzoic acid":'H(Benzoate)',
+    "Acetic acid": 'H(Acetate)',
+    "Citric acid": 'H3(Citrate)',
+    "Formic acid": 'H(Formate)',
+}
+
+
+@app.callback(
+    Output("bjerrum-plot", "figure"),
+    Input("acid-dropdown", "value")
+)
+
+
+def update_bjerrum_plot(acid_species):
+    df = calculate_bjerrum(acid_species)
+    fig = go.Figure()
+    for species in df["species"].unique():
+        sub = df[df["species"] == species]
+        fig.add_trace(go.Scatter(
+            x=sub["pH"], y=sub["value"],
+            mode="lines", name=species
+        ))
+
+    fig.update_layout(
+        xaxis_title="pH",
+        yaxis_title="Fraction",
+        # yaxis=dict(range=[0, 1]),
+        template="plotly_white",
+        # --- LEGEND FONT ---
+        legend=dict(
+            x=0.8,  # X position (0 = left, 1 = right)
+            y=0.5,  # Y position (0 = bottom, 1 = top)
+            bgcolor="rgba(255,255,255,0.6)",  # optional: white transparent box
+            bordercolor="rgba(0,0,0,0.2)",
+            borderwidth=1
+        ),
+
+    )
+    return fig
+
+from dash import html, dcc
+
+# assume you already have SiteHeader and Footer components imported
+
+def bjerrum_layout():
+    return html.Div(
+        [
+            html.Div(
+                [
+                    SiteHeader(
+                        "Bjerrum Plot Viewer",
+                        [("Home", "/"), ("Bjerrum Plot", "/bjerrum")],
+                    ),
+
+                    html.H1("Bjerrum Plot Tool (work in progress)"),
+
+                    dcc.Markdown(
+                        """
+                        *Use this page to explore acid speciation vs pH.*
+
+                        Select an acid, adjust pH range, and the chart will update automatically.
+                        """,
+                        mathjax=True
+                    ),
+
+                    # Placeholder dropdown for acid selection
+                    html.Label(
+                        "Acid species:",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginTop": "20px",
+                            "marginBottom": "10px",
+                        }
+                    ),
+                    dcc.Dropdown(
+                        id="acid-dropdown",
+                        options=[
+                            {"label": "Carbonic acid (H2CO3)", "value": "H2CO3"},
+                            {"label": "Citric acid", "value": "H3(Citrate)"},
+                            {"label": "Benzoic acid", "value": "H(Benzoate)"},
+                            {"label": "Acetic acid", "value": "H(Acetate)"},
+                            {"label": "Formic acid", "value": "H(Formate)"},
+                        ],
+                        value="H2CO3",
+                        style={"width": "300px"}
+                    ),
+
+                    dcc.Graph(id="bjerrum-plot"),
+
+                    html.Hr(),
+                    html.H2("Notes"),
+                    dcc.Markdown(
+                        """
+                        *The figure shows the calculated fraction of each protonation state as a function of pH.*
+                        """
+                    ),
+                ],
+                style={
+                    "width": "90%",
+                    "margin": "0 auto",
+                    "padding": "20px"
+                },
+            ),
+
+            Footer(),
+        ],
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "minHeight": "100vh",
+        },
+    )
+
+# ────────────────────────────────────────────────────────────────────────────
+#   pCO2, DIC, TA plot app
+# ────────────────────────────────────────────────────────────────────────────
+
+# create new PhreeqPython instance
+pp = phreeqpython.PhreeqPython(database='vitens.dat')
+
+# === 1) PRECOMPUTE THE GRID (your phreeqpython code) ===
+
+TA_values = np.arange(0, 51)  # 1–50 mmol/kgw
+CO2_list = [10**(i/10) for i in range(0, 61)]  # ppm
+
+n_TA = len(TA_values)
+n_CO2 = len(CO2_list)
+
+DIC_grid = np.zeros((n_TA, n_CO2))  # Z surface: DIC(TA, pCO2)
+
+for i, TA in enumerate(TA_values):
+    for j, p in enumerate(CO2_list):
+
+        # fresh solution for each (TA, pCO2) pair
+        solution = pp.add_solution({
+            "units": "mmol/kgw",
+            "density": 1.000,
+            "temp": 25,
+            "Mg": TA / 2,
+            "Alkalinity": TA
+        })
+
+        # ppm -> atm
+        pCO2 = p * 1e-6
+
+        # phreeqc uses log10(pCO2)
+        input_pCO2 = np.log10(pCO2)
+        solution.equalize(['CO2(g)'], [input_pCO2])
+
+        # DIC in mmol/kgw (assuming elements['C(4)'] is mol/kgw)
+        DIC_val = solution.elements['C(4)'] * 1000.0
+
+        DIC_grid[i, j] = DIC_val
+
+
+
+
+
+@app.callback(
+    Output('dic-plot', 'figure'),
+    Input('ta-slider', 'value')
+)
+def update_plot(selected_ta):
+    # find index of selected TA
+    idx = np.where(TA_values == selected_ta)[0][0]
+
+    x = CO2_list            # pCO2 [ppm]
+    y = DIC_grid[idx, :]    # DIC for this TA
+
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(
+        x=x,
+        y=y,
+        mode='lines',
+        name="DIC"
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=x,
+        y=[selected_ta] * len(x),
+        mode='lines',
+        name=f"TA = {selected_ta} mmol/kg<sub>w</sub>",
+        line=dict(dash='dot', width=2)  # ← dashed line
+    ))
+
+    # add vertical line for the atmopheric partial pressure
+
+    # get full y-range dynamically
+
+    #ymin = min(y)
+    #ymax = max(y)
+
+    # dont make it dynamic anymore
+    ymin = 0.1
+    ymax = 100
+
+    fig.add_trace(go.Scatter(
+        x=[425, 425],  # vertical line at x = 425 ppm
+        y=[ymin, ymax],  # span full y range
+        mode='lines',
+        line=dict(color='black', width=2, dash='dash'),
+        name='pCO<sub>2</sub> = 425 ppm<br>(atmospheric<br>CO<sub>2</sub> pressure)'
+    ))
+
+    fig.update_layout(
+        #height=None,  # auto height
+        height=500,
+
+        # --- TITLE FONT ---
+        title=None,
+
+        #plot margins
+        margin=dict(t=20, b=50, l=60, r=30),
+
+        # --- AXIS LABEL FONTS ---
+        xaxis_title="pCO<sub>2</sub> [ppm]",
+        yaxis_title="DIC [mmol/kg<sub>w</sub>]",
+
+        xaxis=dict(titlefont=dict(size=22)),
+        yaxis=dict(titlefont=dict(size=22)),
+
+        # --- TICK LABEL SIZE ---
+        font=dict(size=18),  # overall plot font (ticks + legend)
+
+        # --- LEGEND FONT ---
+        legend=dict(
+            x=0.05,  # X position (0 = left, 1 = right)
+            y=0.98,  # Y position (0 = bottom, 1 = top)
+            bgcolor="rgba(255,255,255,0.6)",  # optional: white transparent box
+            bordercolor="rgba(0,0,0,0.2)",
+            borderwidth=1
+        ),
+
+
+        template="plotly_white"
+    )
+
+    fig.update_xaxes(
+        type="log",
+        tickvals=[1, 10, 100, 1000, 10000, 100000,1000000],
+        ticktext=["10<sup>0</sup>", "10<sup>1</sup>", "10<sup>2</sup>", "10<sup>3</sup>", "10<sup>4</sup>", "10<sup>5</sup>","10<sup>6</sup>"]
+    ) # log for the pCO2
+
+    #force the y-axis to be constant scale
+    fig.update_yaxes(
+        type="log",
+        autorange=False,
+        range=[-1, 2],
+        tickvals=[0.1, 1, 10, 100],
+        ticktext=["10<sup>-1</sup>", "10<sup>0</sup>", "10<sup>1</sup>", "10<sup>2</sup>"],
+    )  # log y-axis  ← add this
+
+    return fig
+
+
+
+
+def dic_pco2_layout():
+    return html.Div(
+        [
+            html.Div(
+                [
+                    SiteHeader(
+                        "DIC vs pCO₂ Viewer",
+                        [("Home", "/"), ("DIC vs pCO₂", "/dic-pco2")],
+                    ),
+
+                    html.H1("DIC vs pCO₂ for different TA levels"),
+
+                    dcc.Markdown(PCO2_DIC_TEXT_MD, mathjax=True),
+
+                    # Slider label
+                    html.Label(
+                        "Total Alkalinity (TA):",
+                        style={
+                            "fontSize": "20px",
+                            "fontWeight": "bold",
+                            "color": "#1a73e8",
+                            "backgroundColor": "#e8f0fe",
+                            "padding": "5px 10px",
+                            "borderRadius": "5px",
+                            "display": "inline-block",
+                            "marginTop": "20px",
+                            "marginBottom": "10px",
+                        },
+                    ),
+
+                    # TA slider
+                    dcc.Slider(
+                        id="ta-slider",
+                        min=int(TA_values.min()),
+                        max=int(TA_values.max()),
+                        step=1,
+                        value=2,  # ← default slider position
+                        marks={int(t): str(int(t)) for t in TA_values[::5]},
+                        tooltip={"placement": "bottom", "always_visible": True},
+                    ),
+
+                    # Main plot
+                    dcc.Graph(id="dic-plot"),
+
+                    html.Hr(),
+                    html.H2("Notes"),
+                    dcc.Markdown(
+                        """
+                        *The figure shows modelled DIC as a function of pCO₂ 
+                        at the selected TA level.*
+                        """
+                    ),
+                ],
+                style={
+                    "fontSize": "20px",  # global font for all text inside this Div
+                    "lineHeight": "1.6",
+                    "maxWidth": "1000px",
+                    "margin": "0 auto",
+                    "padding": "20px"
+                },
+
+            ),
+
+            Footer(),
+        ],
+        style={
+            "display": "flex",
+            "flexDirection": "column",
+            "minHeight": "100vh",
+        },
+    )
+
+
+
 # ────────────────────────────────────────────────────────────────────────────
 # 1️⃣  Charge-Balance mini-app                                                  
 # ────────────────────────────────────────────────────────────────────────────
 
-LABEL_WIDTH = "110px"   # fixed room for the ion label
+LABEL_WIDTH = "160px"   # fixed room for the ion label
 UNIT_WIDTH  = "60px"    # fixed room for the unit suffix
 
 def ion_row(label: str, ion_id: str, default: float, unit_suffix: str) -> dbc.Row:
@@ -1046,11 +2409,12 @@ def ion_row(label: str, ion_id: str, default: float, unit_suffix: str) -> dbc.Ro
                     dbc.Button("-", id=f"dec-{ion_id}", color="secondary", n_clicks=0),
                     dbc.Input(
                         id=ion_id,
-                        type="number",
+                        type="text",  #check if text type also works because of red outline issue
                         value=default,
                         step=0.5,
                         min=0,
                         max=2000,
+                        inputMode="decimal",   # try to fix decimal problem
                         style={"textAlign": "right", "width": "110px"},
                     ),
                     dbc.Button("+", id=f"inc-{ion_id}", color="secondary", n_clicks=0),
@@ -1078,13 +2442,7 @@ def cb_layout() -> html.Div:
     intro = html.Div(
         [
             html.H2("Charge-Balance Calculator", className="fw-bold"),
-            html.P(
-                "The tool sums all cation charges (Mg²⁺, Ca²⁺, Na⁺, K⁺) and all anion "
-                "charges (Cl⁻, SO₄²⁻, NO₃⁻, plus Total Alkalinity). The **charge-balance "
-                "error (CBE %)** is the absolute difference between those two sums, "
-                "divided by their average, times 100. Values outside ±5 % are highlighted.",
-                className="text-muted",
-            ),
+            dcc.Markdown(CBE_CALCULATION_MD, mathjax=True),
         ],
         className="text-center mb-4",
         style={"maxWidth": "760px", "margin": "0 auto"},
@@ -1124,13 +2482,13 @@ def cb_layout() -> html.Div:
                    className="text-muted small mt-2"),
             html.Hr(),
             html.H5("Cations", className="fw-semibold mt-2"),
-            ion_row("Mg²⁺", "cb-mg", 53, "mmol"),
+            ion_row("Mg²⁺", "cb-mg", 53.6, "mmol"),
             ion_row("Ca²⁺", "cb-ca", 10.3, "mmol"),
-            ion_row("Na⁺",  "cb-na", 468, "mmol"),
-            ion_row("K⁺",   "cb-k",  10,  "mmol"),
+            ion_row("Na⁺",  "cb-na", 469, "mmol"),
+            ion_row("K⁺",   "cb-k",  10.2,  "mmol"),
             html.H5("Anions", className="fw-semibold mt-4"),
-            ion_row("Total Alk (eq)", "cb-ta", 2.3, "eq"),
-            ion_row("Cl⁻",  "cb-cl", 545, "mmol"),
+            ion_row("Total Alkalinity (TA)", "cb-ta", 2.3, "meq"),
+            ion_row("Cl⁻",  "cb-cl", 546, "mmol"),
             ion_row("SO₄²⁻","cb-so4", 28.2, "mmol"),
             ion_row("NO₃⁻", "cb-no3", 0,   "mmol"),
         ]),
@@ -1175,6 +2533,14 @@ def cb_layout() -> html.Div:
         style={"borderRadius": "1rem"},
     )
 
+    references = html.Div(
+        [
+            dcc.Markdown(REFS_CBE_MD, mathjax=True, style={"fontSize": "0.9rem"}),
+        ],
+        style={"maxWidth": "760px", "margin": "4rem auto 0"},
+        className="text-start",
+    )
+
     body = html.Div(
         dbc.Container(
             [
@@ -1190,6 +2556,7 @@ def cb_layout() -> html.Div:
                     ],
                     class_name="justify-content-center",
                 ),
+                references   # added to the app
             ],
             style={
                 "maxWidth": "1160px",
@@ -1218,7 +2585,11 @@ for _ion in ["cb-mg", "cb-ca", "cb-na", "cb-k", "cb-ta", "cb-cl", "cb-so4", "cb-
 
     @app.callback(Output(_ion, "value"), Input(inc_id, "n_clicks"), Input(dec_id, "n_clicks"), State(_ion, "value"), prevent_initial_call=True)
     def _stepper(inc, dec, value, _ion=_ion, inc_id=inc_id, dec_id=dec_id):
-        value = value or 0
+        try:
+            value_str = str(value).strip().replace(",", ".") if value is not None else "0"
+            value = float(value_str)
+        except ValueError:
+            value = 0.0
         trigger = ctx.triggered_id
         if trigger == inc_id:
             value += 0.5
@@ -1255,17 +2626,17 @@ def _update_balance(mg, ca, na, k, ta, cl, so4, no3, unit, density):
 
     # ── equivalents of charge (mol · kg⁻¹) ──────────────────────────
     cations_eq = (mg * 2 + ca * 2 + na + k) / 1000.0
-    anions_eq  = (cl + so4 * 2 + no3) / 1000.0 + ta  # TA is already in eq
+    anions_eq  = (cl + so4 * 2 + no3) / 1000.0 + ta/1000  # TA also needs to be divided by 1000
 
     # ── charge-balance error ────────────────────────────────────────
-    cbe_abs = abs(cations_eq - anions_eq)                 # in eq
-    denom   = (cations_eq + anions_eq) / 2.0
-    cbe_rel = (cbe_abs / denom * 100) if denom else 0.0   # in %
+    cbe_total = cations_eq - anions_eq                 # error in charge eq
+    denom   = (cations_eq + anions_eq)                 # sum of it
+    cbe_rel = (cbe_total / denom)*100 if denom else 0.0   # relative error in %
 
     # badge colour: red if outside ±5 %
     colour = "danger" if cbe_rel > 5 else "success"
 
-    return f"{cbe_abs:.4f}", f"{cbe_rel:.2f} %", colour
+    return f"{cbe_total:.4f}", f"{cbe_rel:.2f} %", colour
 
 
 # ────────────────────────  PAGE ROUTING CALLBACK ─────────────────────────
@@ -1277,8 +2648,18 @@ def display_page(pathname: str):
         return calc_layout()
     if pathname == "/xrf":
         return xrf_layout()
+    if pathname == "/mineral-dissolution":
+        return mineral_layout()
+    if pathname == "/forsterite-dissolution":
+        return forsterite_dissolution_layout()
+    if pathname == "/bjerrum-plot-explorer":
+        return bjerrum_layout()
     if pathname == "/charge-balance":
         return cb_layout()
+    if pathname == "/carbonate-system-modeling-seawater":
+        return seawater_layout()
+    if pathname == "/dic-pCO2":
+        return dic_pco2_layout()
     if pathname == "/impressum":
         return legal_layout(IMPRESSUM_MD, "Impressum", pathname)
     if pathname == "/datenschutz":
