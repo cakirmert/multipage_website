@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Modeling Tools for Geochemistry</title>
+<style>
+    /* Hero section override on top of common.js styles */
+    .hero {
+        background-image: linear-gradient(rgba(20,156,125,.85), rgba(13,115,89,.85)), url("./assets/background_image.jpg");
+        background-size: cover; background-position: center;
+        color: white; padding: 4rem 1rem 5rem;
+        text-align: center;
+    }
+    .hero h1 { font-size: 2.5rem; margin: 0 0 1rem; color: white; }
+    .hero p  { font-size: 1.1rem; max-width: 740px; margin: 0 auto; opacity: 0.95; }
+
+    .grid-tools {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 1.25rem;
+        margin: 3rem auto;
+        max-width: 1160px;
+        padding: 0 1rem;
+    }
+    .tool-card {
+        position: relative;
+        background: white; border: 1px solid var(--gray-200);
+        border-radius: 1rem; padding: 1.5rem;
+        text-decoration: none; color: var(--gray-900);
+        transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+        display: flex; flex-direction: column;
+        overflow: hidden;
+    }
+    .tool-card::before {
+        content: ""; position: absolute; left: 0; top: 0;
+        width: 4px; height: 100%; background: var(--green);
+        transform: scaleY(0); transform-origin: top;
+        transition: transform .2s ease;
+    }
+    .tool-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,.08);
+        border-color: var(--green);
+    }
+    .tool-card:hover::before { transform: scaleY(1); }
+    .tool-card h3 {
+        margin: 0 0 .5rem; font-size: 1.15rem;
+        color: var(--green);
+    }
+    .tool-card p { margin: 0; font-size: .92rem; color: var(--gray-700); flex: 1; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+    <h1>Modeling Tools for Geochemistry</h1>
+    <p>
+        Interactive calculators for carbonate chemistry, charge-balance checking, and
+        mineral-oxide conversions. Everything runs locally in your browser.
+    </p>
+</div>
+
+<div class="grid-tools">
+    <a class="tool-card" href="./pages/open-carbonate.html">
+        <h3>Open Carbonate System</h3>
+        <p>Equilibrium speciation in fresh waters. Two views: a 3-input graph view (T, pCO₂, TA) and the full 11-input table view that takes major ion compositions and returns species, saturation indices, and bulk parameters.</p>
+    </a>
+    <a class="tool-card" href="./pages/seawater.html">
+        <h3>Seawater Carbonate System</h3>
+        <p>Solve the open seawater carbonate system from any two parameters of {TA, DIC, pH, pCO₂}. Returns full speciation plus saturation states for calcite and aragonite.</p>
+    </a>
+    <a class="tool-card" href="./pages/charge-balance.html">
+        <h3>Charge Balance</h3>
+        <p>Verify a major-ion analysis for electrical neutrality and flag errors outside ±5 %.</p>
+    </a>
+    <a class="tool-card" href="./pages/xrf.html">
+        <h3>XRF Oxide Simulator</h3>
+        <p>Convert any mineral formula into theoretical XRF oxide weight fractions. Includes a searchable index of ~5700 RRUFF minerals.</p>
+    </a>
+    <a class="tool-card" href="./pages/mineral-dissolution.html">
+        <h3>Mineral Dissolution (Lasaga)</h3>
+        <p>Lifetime of a spherical crystal at pH 5, 25 °C, using the Lasaga (1994) dissolution rate compilation.</p>
+    </a>
+    <a class="tool-card" href="./pages/forsterite-dissolution.html">
+        <h3>Forsterite Dissolution f(pH, T, r)</h3>
+        <p>Dissolution lifetime of a forsterite crystal as a function of pH, temperature and initial radius (Rimstidt et al. 2012).</p>
+    </a>
+    <a class="tool-card" href="./pages/bjerrum.html">
+        <h3>Bjerrum Plot Explorer</h3>
+        <p>Speciation fractions vs pH for carbonic acid and several organic acids.</p>
+    </a>
+    <a class="tool-card" href="./pages/dic-pco2.html">
+        <h3>DIC vs pCO₂</h3>
+        <p>DIC as a function of atmospheric pCO₂ for total alkalinities from 0 to 50 mmol / kg.</p>
+    </a>
+</div>
+
+<script type="module">
+import { setupChrome } from "./js/common.js";
+setupChrome({ title: "Geochemistry Tools", crumbs: [] });
+
+// The header that setupChrome injects expects the logo at "../assets/uhh-logo-web.jpg",
+// but on the home page the logo is at "./assets/uhh-logo-web.jpg". Patch it after injection.
+const img = document.querySelector("header.site img");
+if (img) img.src = "./assets/uhh-logo-web.jpg";
+const headerLink = document.querySelector("header.site a");
+if (headerLink) headerLink.href = "./index.html";
+
+// Same patch for footer links so they resolve from the home page.
+for (const a of document.querySelectorAll("footer.site a")) {
+    a.href = a.href.replace("/../pages/", "/pages/");
+}
+</script>
+
+</body>
+</html>

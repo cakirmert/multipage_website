@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Forsterite Dissolution</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+
+<main>
+<h1>Forsterite Dissolution Model</h1>
+<p class="note">
+    Lifetime of a spherical forsterite (Mg₂SiO₄) crystal as a function of pH, temperature
+    and initial radius. Uses the geochemical rate law from Rimstidt et al. (2012) with
+    pH-dependent activation energies.
+</p>
+
+<div id="theory" class="card"></div>
+
+<div class="card">
+    <h3>pH</h3>
+    <input id="ph" type="range" min="0" max="14" step="0.1" value="5" style="width: 100%;" />
+    <div id="ph-val" class="status"></div>
+
+    <h3 style="margin-top: 1rem;">Temperature (°C)</h3>
+    <input id="temp" type="range" min="0" max="150" step="1" value="25" style="width: 100%;" />
+    <div id="temp-val" class="status"></div>
+
+    <h3 style="margin-top: 1rem;">Initial crystal radius (µm)</h3>
+    <input id="r" type="range" min="1" max="1000" step="1" value="100" style="width: 100%;" />
+    <div id="r-val" class="status"></div>
+</div>
+
+<div class="card">
+    <div id="plot" style="height: 460px;"></div>
+</div>
+
+<div class="card">
+    <h3>References</h3>
+    <div id="refs"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+
+setupChrome({
+    title: "Forsterite Dissolution",
+    crumbs: [["Home", "../index.html"], ["Forsterite Dissolution", "#"]],
+});
+renderMarkdownUrl("../assets/markdown/text_forsterite.md",       "#theory");
+renderMarkdownUrl("../assets/markdown/references_forsterite.md", "#refs");
+
+const $ = (id) => document.getElementById(id);
+
+// Forsterite molar volume (m³/mol). Source: app.py:1856.
+const Vm = 43.79e-6;
+
+// log10(rate) in mol/m²/s.  app.py:1822-1851.
+function logRate(pH, T_C) {
+    const TK = T_C + 273.15;
+    if (pH <= 5.6) return 6.05  - 0.46  * pH - 3683.0 / TK;
+    return            4.07  - 0.256 * pH - 3465.0 / TK;
+}
+
+function compute() {
+    const pH    = Number($("ph").value);
+    const T     = Number($("temp").value);
+    const r_um  = Number($("r").value);
+    $("ph-val").textContent   = `pH = ${pH.toFixed(1)}`;
+    $("temp-val").textContent = `T = ${T} °C`;
+    $("r-val").textContent    = `r₀ = ${r_um} µm`;
+
+    const lr = logRate(pH, T);
+    const R  = Math.pow(10, lr);                    // mol/m²/s
+    const r0 = r_um * 1e-6;                         // µm → m
+    const t_dissolve = r0 / (R * Vm);               // s
+
+    // 1000-point time series from 0 → t_dissolve.
+    const N = 1000;
+    const time_s = new Array(N), time_yr = new Array(N);
+    const r_t    = new Array(N), V_t      = new Array(N);
+    for (let i = 0; i < N; i++) {
+        const t = (i / (N - 1)) * t_dissolve;
+        const r = Math.max(0, r0 - R * Vm * t);
+        time_s[i]  = t;
+        time_yr[i] = t / (3600 * 24 * 365.25);
+        r_t[i]     = r * 1e6;                       // m → µm
+        V_t[i]     = (4 / 3) * Math.PI * r ** 3;    // m³
+    }
+    const t_yr = t_dissolve / (3600 * 24 * 365.25);
+
+    Plotly.react("plot", [
+        { x: time_yr, y: V_t, name: "Volume (m³)",
+          line: { color: "#1f77b4" }, yaxis: "y" },
+        { x: time_yr, y: r_t, name: "Radius (µm)",
+          line: { color: "#2ca02c" }, yaxis: "y2" },
+    ], {
+        title: `Forsterite dissolution — pH ${pH.toFixed(1)}, ${T} °C, r₀ = ${r_um} µm` +
+               `<br>log rate = ${lr.toFixed(3)} log₁₀(mol/m²/s) — full dissolution in ${t_yr.toExponential(3)} yr`,
+        xaxis: { title: "Time (years)", exponentformat: "e", showexponent: "all" },
+        yaxis: {
+            title: { text: "Volume (m³)", font: { color: "#1f77b4" } },
+            tickfont: { color: "#1f77b4" },
+            exponentformat: "e", showexponent: "all",
+        },
+        yaxis2: {
+            title: { text: "Radius (µm)", font: { color: "#2ca02c" } },
+            overlaying: "y", side: "right", tickfont: { color: "#2ca02c" },
+        },
+        legend: { x: 0.7, y: 0.99 },
+        template: "simple_white",
+        margin: { t: 80, l: 80, r: 80, b: 60 },
+    }, { displayModeBar: false });
+}
+
+for (const k of ["ph", "temp", "r"]) $(k).addEventListener("input", compute);
+compute();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Barrierefreiheit</title>
+</head>
+<body>
+
+<main>
+<div id="content"></div>
+</main>
+
+<script type="module">
+import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+
+setupChrome({
+    title: "Barrierefreiheit",
+    crumbs: [["Home", "../index.html"], ["Barrierefreiheit", "#"]],
+});
+await renderMarkdownUrl("../assets/markdown/barrierefreiheit.md", "#content");
+</script>
+
+</body>
+</html>

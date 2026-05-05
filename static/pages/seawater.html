@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Seawater Carbonate System</title>
+</head>
+<body>
+
+<main>
+<h1>Seawater Carbonate System Calculator</h1>
+<p class="note">
+    Compute the full open-system carbonate speciation in seawater. Pick any two
+    parameters from {TA, DIC, pH, pCO₂} plus salinity and temperature; the rest
+    are calculated from equilibrium constants (Mehrbach 1973 refit by Dickson &amp;
+    Millero 1987, total pH scale; KSpCalcite/KSpAragonite from Mucci 1983).
+    Validated against PyCO2SYS within 5 % across 7 reference cases.
+</p>
+
+<div class="card">
+    <h3>Choose two parameters</h3>
+    <div class="row">
+        <label class="field">Parameter 1
+            <select id="p1-type">
+                <option value="TA"   selected>Total Alkalinity (µmol/kg)</option>
+                <option value="DIC">DIC (µmol/kg)</option>
+                <option value="pH">pH (total scale)</option>
+                <option value="pCO2">pCO₂ (µatm)</option>
+            </select>
+        </label>
+        <label class="field">Value 1
+            <input id="p1-val" type="number" value="2300" step="0.1" />
+        </label>
+        <label class="field">Parameter 2
+            <select id="p2-type">
+                <option value="TA">Total Alkalinity (µmol/kg)</option>
+                <option value="DIC" selected>DIC (µmol/kg)</option>
+                <option value="pH">pH (total scale)</option>
+                <option value="pCO2">pCO₂ (µatm)</option>
+            </select>
+        </label>
+        <label class="field">Value 2
+            <input id="p2-val" type="number" value="2000" step="0.1" />
+        </label>
+    </div>
+
+    <h3 style="margin-top: 1rem;">Conditions</h3>
+    <div class="row">
+        <label class="field">Salinity (PSU)
+            <input id="S" type="number" value="35" step="0.1" min="0" max="45" />
+        </label>
+        <label class="field">Temperature (°C)
+            <input id="T" type="number" value="25" step="0.1" min="-2" max="40" />
+        </label>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Calculated carbonate system</h2>
+    <div id="status" class="status"></div>
+    <div id="results" class="summary-pills"></div>
+</div>
+
+<div class="card">
+    <h2>Speciation table</h2>
+    <div id="species"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome, makeTable } from "../js/common.js";
+import { solveCarbonateSystem } from "../js/co2sys.js";
+
+setupChrome({
+    title: "Seawater Carbonate System",
+    crumbs: [["Home", "../index.html"], ["Seawater Carbonate System", "#"]],
+});
+
+const $ = (id) => document.getElementById(id);
+
+function compute() {
+    const t1 = $("p1-type").value, t2 = $("p2-type").value;
+    if (t1 === t2) {
+        $("status").textContent = "Pick two different parameters.";
+        $("status").className = "status err";
+        $("results").innerHTML = "";
+        $("species").innerHTML = "";
+        return;
+    }
+    // umol/kg → mol/kg for solver inputs.
+    const toMolKg = (t, v) => (t === "TA" || t === "DIC") ? v * 1e-6 : v;
+    let r;
+    try {
+        r = solveCarbonateSystem({
+            par1: { type: t1, value: toMolKg(t1, Number($("p1-val").value)) },
+            par2: { type: t2, value: toMolKg(t2, Number($("p2-val").value)) },
+            salinity:    Number($("S").value),
+            temperature: Number($("T").value),
+        });
+    } catch (e) {
+        $("status").textContent = e.message;
+        $("status").className = "status err";
+        return;
+    }
+
+    $("status").textContent = "computed";
+    $("status").className = "status ok";
+
+    $("results").innerHTML =
+        `<span><b>pH</b> = ${r.pH.toFixed(3)}</span>` +
+        `<span><b>TA</b> = ${(r.TA * 1e6).toFixed(1)} µmol/kg</span>` +
+        `<span><b>DIC</b> = ${(r.DIC * 1e6).toFixed(1)} µmol/kg</span>` +
+        `<span><b>pCO₂</b> = ${r.pCO2.toFixed(1)} µatm</span>` +
+        `<span><b>Ω<sub>calcite</sub></b> = ${r.OmegaCalcite.toFixed(2)}</span>` +
+        `<span><b>Ω<sub>aragonite</sub></b> = ${r.OmegaAragonite.toFixed(2)}</span>`;
+
+    const rows = [
+        { sp: "CO₂(aq)",   c: r.CO2  * 1e6 },
+        { sp: "HCO₃⁻",      c: r.HCO3 * 1e6 },
+        { sp: "CO₃²⁻",      c: r.CO3  * 1e6 },
+    ];
+    $("species").innerHTML = makeTable(rows, [
+        { key: "sp", label: "Species" },
+        { key: "c",  label: "concentration (µmol/kg)", fmt: (v) => v.toFixed(2) },
+    ]);
+}
+
+for (const k of ["p1-type","p1-val","p2-type","p2-val","S","T"])
+    $(k).addEventListener("input", compute);
+compute();
+</script>
+
+</body>
+</html>

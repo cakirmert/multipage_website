@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>DIC vs pCO2</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+
+<main>
+<h1>DIC vs pCO₂ for different TA levels</h1>
+<p class="note">
+    Modelled DIC at 25 °C as a function of atmospheric pCO₂, for total alkalinities from
+    0 to 50 mmol / kg<sub>water</sub>. The 51 × 61 grid was precomputed once with PHREEQC
+    and is rendered here from a static JSON file (instant interactivity, no live solves).
+</p>
+<div id="theory" class="card"></div>
+
+<div class="card">
+    <h3>Total Alkalinity (TA, mmol / kg<sub>water</sub>)</h3>
+    <input id="ta" type="range" min="0" max="50" step="1" value="2" style="width: 100%;" />
+    <div id="ta-val" class="status"></div>
+</div>
+
+<div class="card">
+    <div id="plot" style="height: 540px;"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+
+setupChrome({
+    title: "DIC vs pCO2",
+    crumbs: [["Home", "../index.html"], ["DIC vs pCO2", "#"]],
+});
+renderMarkdownUrl("../assets/markdown/pCO2-DIC.md", "#theory");
+
+const $ = (id) => document.getElementById(id);
+const grid = await (await fetch("../assets/data/dic_pco2.json")).json();
+
+function render() {
+    const TA = Number($("ta").value);
+    const idx = grid.TA_values.indexOf(TA);
+    if (idx < 0) return;
+    $("ta-val").textContent = `TA = ${TA} mmol/kgw`;
+
+    const x = grid.CO2_ppm;
+    const y = grid.DIC_grid[idx];
+
+    Plotly.react("plot", [
+        { x, y, mode: "lines", name: "DIC", line: { color: "#1f77b4" } },
+        { x, y: x.map(() => TA), mode: "lines",
+          name: `TA = ${TA} mmol/kgw`,
+          line: { dash: "dot", width: 2, color: "#888" } },
+        { x: [425, 425], y: [0.1, 100], mode: "lines",
+          line: { color: "black", width: 2, dash: "dash" },
+          name: "pCO₂ = 425 ppm (atmospheric)" },
+    ], {
+        height: 500,
+        margin: { t: 30, l: 70, r: 30, b: 60 },
+        xaxis: {
+            title: "pCO₂ [ppm]",
+            type: "log",
+            tickvals: [1, 10, 100, 1000, 10000, 100000, 1000000],
+            ticktext: ["10⁰","10¹","10²","10³","10⁴","10⁵","10⁶"],
+        },
+        yaxis: {
+            title: "DIC [mmol/kg<sub>w</sub>]",
+            type: "log", autorange: false, range: [-1, 2],
+            tickvals: [0.1, 1, 10, 100],
+            ticktext: ["10⁻¹","10⁰","10¹","10²"],
+        },
+        legend: { x: 0.05, y: 0.98, bgcolor: "rgba(255,255,255,0.6)" },
+        template: "plotly_white",
+    }, { displayModeBar: false });
+}
+
+$("ta").addEventListener("input", render);
+render();
+</script>
+
+</body>
+</html>

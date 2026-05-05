@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mineral Dissolution</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+
+<main>
+<h1>Mineral Dissolution Model — Lasaga (1994)</h1>
+<p class="note">
+    Lifetime of a spherical crystal undergoing surface-controlled dissolution at pH 5
+    and 25 °C, using the dissolution rates and molar volumes tabulated by Lasaga (1994).
+</p>
+
+<div id="equations" class="card"></div>
+
+<div class="card">
+    <h3>Mineral</h3>
+    <select id="mineral" style="width:100%; padding:.5rem; font-size:1rem;"></select>
+
+    <h3 style="margin-top: 1rem;">Initial crystal radius (µm)</h3>
+    <input id="r" type="range" min="1" max="1000" step="1" value="100" style="width: 100%;" />
+    <div id="r-val" class="status"></div>
+</div>
+
+<div class="card">
+    <div id="plot" style="height: 460px;"></div>
+</div>
+
+<div class="card">
+    <h3>References</h3>
+    <div id="refs"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+
+setupChrome({
+    title: "Mineral Dissolution",
+    crumbs: [["Home", "../index.html"], ["Mineral Dissolution", "#"]],
+});
+renderMarkdownUrl("../assets/markdown/equations_lasaga.md",  "#equations");
+renderMarkdownUrl("../assets/markdown/references_lasaga.md", "#refs");
+
+const $ = (id) => document.getElementById(id);
+const minerals = await (await fetch("../assets/data/mineral_lifetimes.json")).json();
+
+// Populate dropdown.
+const sel = $("mineral");
+for (const m of minerals) {
+    const opt = document.createElement("option");
+    opt.value = m.mineral;
+    opt.textContent = `${m.mineral} (log rate ${m.log_rate.toFixed(2)} mol/m²/s)`;
+    sel.appendChild(opt);
+}
+sel.value = minerals[Math.min(11, minerals.length - 1)]?.mineral ?? minerals[0].mineral;
+
+function compute() {
+    const m = minerals.find(x => x.mineral === sel.value);
+    if (!m) return;
+    const r_um = Number($("r").value);
+    $("r-val").textContent = `r₀ = ${r_um} µm`;
+
+    const Vm = m.molar_volume_cm3_per_mol * 1e-6;       // cm³/mol → m³/mol
+    const R  = Math.pow(10, m.log_rate);                // mol/m²/s
+    const r0 = r_um * 1e-6;                             // µm → m
+    const t_dissolve = r0 / (R * Vm);                   // s
+
+    const N = 1000;
+    const time_yr = new Array(N), r_t = new Array(N), V_t = new Array(N);
+    for (let i = 0; i < N; i++) {
+        const t = (i / (N - 1)) * t_dissolve;
+        const r = Math.max(0, r0 - R * Vm * t);
+        time_yr[i] = t / (3600 * 24 * 365.25);
+        r_t[i] = r * 1e6;
+        V_t[i] = (4/3) * Math.PI * r ** 3;
+    }
+    const t_yr = t_dissolve / (3600 * 24 * 365.25);
+
+    Plotly.react("plot", [
+        { x: time_yr, y: V_t, name: "Volume (m³)", line: { color: "#1f77b4" } },
+        { x: time_yr, y: r_t, name: "Radius (µm)", line: { color: "#2ca02c" }, yaxis: "y2" },
+    ], {
+        title: `${m.mineral} — radius ${r_um} µm, log rate ${m.log_rate.toFixed(2)} mol/m²/s` +
+               `<br>full dissolution in ${t_yr.toExponential(3)} years`,
+        xaxis: { title: "Time (years)", exponentformat: "e", showexponent: "all" },
+        yaxis: {
+            title: { text: "Volume (m³)", font: { color: "#1f77b4" } },
+            tickfont: { color: "#1f77b4" },
+            exponentformat: "e", showexponent: "all",
+        },
+        yaxis2: {
+            title: { text: "Radius (µm)", font: { color: "#2ca02c" } },
+            overlaying: "y", side: "right", tickfont: { color: "#2ca02c" },
+        },
+        legend: { x: 0.7, y: 0.99 },
+        template: "simple_white",
+        margin: { t: 80, l: 80, r: 80, b: 60 },
+    }, { displayModeBar: false });
+}
+
+sel.addEventListener("change", compute);
+$("r").addEventListener("input", compute);
+compute();
+</script>
+
+</body>
+</html>

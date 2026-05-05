@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Charge Balance Calculator</title>
+</head>
+<body>
+
+<main>
+<h1>Charge-Balance Calculator</h1>
+<p class="note">
+    Check a major-ion analysis for electrical neutrality. The relative charge-balance error
+    (CBE) should ideally be within ±5 %; values outside that range usually mean a missing
+    species or a measurement problem.
+</p>
+<div id="theory" class="card"></div>
+
+<div class="card">
+    <h2>Measurement units</h2>
+    <div class="row">
+        <label class="field">Unit
+            <select id="unit">
+                <option value="mmol/kg">mmol / kg</option>
+                <option value="mmol/L">mmol / L</option>
+            </select>
+        </label>
+        <label class="field" id="density-wrap" style="display:none">Density (kg / L)
+            <input id="density" type="number" value="1.025" step="0.001" min="0.8" max="1.3" />
+        </label>
+    </div>
+
+    <h2>Cations</h2>
+    <div class="row">
+        <label class="field">Mg²⁺ (mmol)  <input id="mg" type="number" value="53.6" step="0.1" /></label>
+        <label class="field">Ca²⁺ (mmol)  <input id="ca" type="number" value="10.3" step="0.1" /></label>
+        <label class="field">Na⁺ (mmol)   <input id="na" type="number" value="469"  step="1"   /></label>
+        <label class="field">K⁺ (mmol)    <input id="k"  type="number" value="10.2" step="0.1" /></label>
+    </div>
+
+    <h2>Anions</h2>
+    <div class="row">
+        <label class="field">Total Alkalinity (meq) <input id="ta"  type="number" value="2.3"  step="0.1" /></label>
+        <label class="field">Cl⁻ (mmol)             <input id="cl"  type="number" value="546"  step="1"   /></label>
+        <label class="field">SO₄²⁻ (mmol)           <input id="so4" type="number" value="28.2" step="0.1" /></label>
+        <label class="field">NO₃⁻ (mmol)            <input id="no3" type="number" value="0"    step="0.1" /></label>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Results</h2>
+    <div id="results" class="summary-pills"></div>
+    <p class="note" id="verdict"></p>
+</div>
+
+<div class="card">
+    <h2>References</h2>
+    <div id="refs"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+
+setupChrome({
+    title: "Charge Balance",
+    crumbs: [["Home", "../index.html"], ["Charge Balance", "#"]],
+});
+renderMarkdownUrl("../assets/markdown/CBE_calc_text.md",  "#theory");
+renderMarkdownUrl("../assets/markdown/references_CBE.md", "#refs");
+
+const $ = (id) => document.getElementById(id);
+
+function compute() {
+    const unit = $("unit").value;
+    $("density-wrap").style.display = unit === "mmol/L" ? "" : "none";
+
+    // Convert mmol/L to mmol/kg if needed (matches app.py:2622).
+    const factor = unit === "mmol/L" ? 1 / Number($("density").value || 1) : 1;
+    const num = id => (Number($(id).value) || 0) * factor;
+
+    const mg = num("mg"), ca = num("ca"), na = num("na"), k = num("k");
+    const ta = num("ta"), cl = num("cl"), so4 = num("so4"), no3 = num("no3");
+
+    // Charge equivalents (mol / kg). app.py:2628.
+    const cationsEq = (mg * 2 + ca * 2 + na + k) / 1000;
+    const anionsEq  = (cl + so4 * 2 + no3 + ta) / 1000;
+    const cbe       = cationsEq - anionsEq;
+    const denom     = cationsEq + anionsEq;
+    const cbeRel    = denom > 0 ? (cbe / denom) * 100 : 0;
+
+    $("results").innerHTML =
+        `<span><b>Σ cations</b> = ${cationsEq.toFixed(5)} eq/kg</span>` +
+        `<span><b>Σ anions</b>  = ${anionsEq.toFixed(5)} eq/kg</span>` +
+        `<span><b>Absolute CBE</b> = ${cbe.toFixed(5)} eq/kg</span>` +
+        `<span><b>Relative CBE</b> = <span style="color:${Math.abs(cbeRel) > 5 ? '#dc2626' : '#149c7d'}">${cbeRel.toFixed(2)} %</span></span>`;
+
+    $("verdict").textContent = Math.abs(cbeRel) > 5
+        ? `Outside ±5 % — analysis likely has a missing species or a measurement error.`
+        : `Within ±5 % — analysis is consistent with electrical neutrality.`;
+}
+
+for (const k of ["unit","density","mg","ca","na","k","ta","cl","so4","no3"])
+    $(k).addEventListener("input", compute);
+compute();
+</script>
+
+</body>
+</html>

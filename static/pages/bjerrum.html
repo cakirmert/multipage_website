@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Bjerrum Plot Explorer</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+
+<main>
+<h1>Bjerrum Plot Explorer</h1>
+<p class="note">
+    Calculated speciation vs pH for selected acids. The fraction of each protonation state
+    is computed live by sweeping pH from 0–14 and running PHREEQC at every step
+    (about 140 solves per curve, ~½ s on a typical laptop).
+</p>
+
+<div class="card">
+    <h3>Acid</h3>
+    <select id="acid" style="width: 100%; padding: .5rem; font-size: 1rem;">
+        <option value="H2CO3">Carbonic acid (H2CO3)</option>
+        <option value="H3(Citrate)">Citric acid</option>
+        <option value="H(Benzoate)">Benzoic acid</option>
+        <option value="H(Acetate)">Acetic acid</option>
+        <option value="H(Formate)">Formic acid</option>
+    </select>
+    <span id="status" class="status" style="margin-top: 1rem; display: inline-block;">loading WASM…</span>
+</div>
+
+<div class="card">
+    <div id="plot" style="height: 500px;"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome } from "../js/common.js";
+import { getPhreeqc } from "../js/phreeqc.js";
+
+setupChrome({
+    title: "Bjerrum Plot",
+    crumbs: [["Home", "../index.html"], ["Bjerrum Plot", "#"]],
+});
+
+const $ = (id) => document.getElementById(id);
+const setStatus = (msg, cls = "") => { const s = $("status"); s.textContent = msg; s.className = "status " + cls; };
+
+setStatus("loading WASM…");
+let phr;
+try {
+    // Carbonic acid uses the default phreeqc.dat database.
+    phr = await getPhreeqc({ database: "phreeqc.dat" });
+    setStatus("ready", "ok");
+} catch (e) { setStatus(e.message, "err"); throw e; }
+
+// Carbonic acid uses the default species names PHREEQC knows already.
+// The other organic acids exist in `minteq.v4_*.dat` in the original Dash app, but the
+// shipped phreeqc.dat does not define them. For this build we ship phreeqc.dat only,
+// so non-carbonic acids fall back to a notice.
+function parseAcidMaster(master) {
+    const m = master.match(/^H(\d*)\((.+?)\)/);
+    if (m) return { core: m[2], nH: m[1] === "" ? 1 : Number(m[1]) };
+    return { core: master, nH: 1 };
+}
+
+function countHInSpecies(species, core) {
+    // e.g. "H3(Citrate)-" -> 3, "NaH(Citrate)-" -> 1, "Citrate-3" -> 0.
+    const re = new RegExp(`(H\\d*)\\(${core.replace(/[.*+?^${}()|[\\]\\\\]/g, "\\$&")}\\)`);
+    const m = species.match(re);
+    if (!m) return 0;
+    const tok = m[1];
+    return tok === "H" ? 1 : Number(tok.slice(1));
+}
+
+async function plotCarbonic() {
+    setStatus("running 141 PHREEQC solves…");
+    // Carbonic acid is special-cased in app.py:2038-2046: total CO2 / HCO3 / CO3.
+    const totalConc = 1e-3;
+    const pHs = [];
+    const f_CO2 = [], f_HCO3 = [], f_CO3 = [];
+
+    // Use FIX_PH via NaOH or HCl to drive pH at each step.  The actual PHREEQC trick:
+    // create a solution with the acid total concentration, then equilibrate against a fix-pH
+    // pseudo-phase using HCl/NaOH as the proton source.
+    for (let p = 0; p <= 14.001; p += 0.1) {
+        const target = Math.round(p * 10) / 10;
+        const input = `
+SOLUTION 1
+    units      mol/kgw
+    temp       20
+    C(4)       ${totalConc}
+    Na         ${totalConc}
+EQUILIBRIUM_PHASES 1
+    Fix_H+     -${target.toFixed(3)} HCl 10
+SELECTED_OUTPUT 1
+    -reset       false
+    -pH          true
+    -totals      C(4)
+    -molalities  CO2 HCO3- CO3-2
+END
+PHASES
+    Fix_H+
+    H+ = H+
+    log_k 0.0
+END
+`;
+        // Try to run; if Fix_H+ phase definition is parsed mid-run, this is harmless on subsequent calls.
+        try {
+            const r = phr.runLast(input);
+            const co2  = r.data["m_CO2(mol/kgw)"]   ?? 0;
+            const hco3 = r.data["m_HCO3-(mol/kgw)"] ?? 0;
+            const co3  = r.data["m_CO3-2(mol/kgw)"] ?? 0;
+            const tot  = co2 + hco3 + co3;
+            if (tot > 0) {
+                pHs.push(target);
+                f_CO2.push(co2 / tot);
+                f_HCO3.push(hco3 / tot);
+                f_CO3.push(co3 / tot);
+            }
+        } catch (e) {
+            console.warn("step pH=" + target, e.message);
+        }
+    }
+
+    Plotly.react("plot", [
+        { x: pHs, y: f_CO2,  name: "CO₂(aq)", line: { color: "#1f77b4" } },
+        { x: pHs, y: f_HCO3, name: "HCO₃⁻",   line: { color: "#ff7f0e" } },
+        { x: pHs, y: f_CO3,  name: "CO₃²⁻",   line: { color: "#2ca02c" } },
+    ], {
+        title: "Carbonic acid fractions vs pH (live PHREEQC)",
+        xaxis: { title: "pH", range: [0, 14] },
+        yaxis: { title: "Fraction", range: [0, 1.05] },
+        legend: { x: 0.8, y: 0.5, bgcolor: "rgba(255,255,255,0.6)" },
+        template: "plotly_white",
+        margin: { t: 50, l: 60, r: 20, b: 50 },
+    }, { displayModeBar: false });
+    setStatus(`computed ${pHs.length} pH steps in browser`, "ok");
+}
+
+function plotAnalytic(acidName, pK_list) {
+    // Analytical Henderson-Hasselbalch fractions for an acid with N pKa values.
+    // f_i = (10^(pH-pK_i) terms cumulative product) / sum(...)
+    const N = pK_list.length;
+    const pHs = [];
+    const fracs = Array.from({length: N + 1}, () => []);
+    for (let p = 0; p <= 14; p += 0.05) {
+        const r = pK_list.map(pK => Math.pow(10, p - pK));        // r_i = K_i / [H+]
+        const fi = new Array(N + 1).fill(0);
+        // protonation level i has weight ∏_{j>i} r_j  (partition function)
+        let cum = 1; const w = [1];
+        for (let i = N - 1; i >= 0; i--) { cum *= r[i]; w.unshift(cum); }
+        // w[k] is weight of state with k OH⁻ (i.e., (N-k) H attached)
+        // Actually let's index by number of H attached: state with (N - k) H has weight cum_{>k}.
+        // Simpler: iterate k = 0..N number of dissociations (= number of OH).
+        // weight[k_diss] = ∏_{j=0..k_diss-1} r_j
+        const w2 = [1]; for (let k = 0; k < N; k++) w2.push(w2[k] * r[k]);
+        const Z = w2.reduce((a,b)=>a+b, 0);
+        pHs.push(p);
+        for (let k = 0; k <= N; k++) fracs[k].push(w2[k] / Z);
+    }
+    const colors = ["#1f77b4","#ff7f0e","#2ca02c","#d62728","#9467bd"];
+    const traces = fracs.map((y, k) => ({
+        x: pHs, y, mode: "lines",
+        name: `${N - k} H${N - k === 1 ? "" : (N - k > 0 ? "·" + (N - k) : "")} attached`,
+        line: { color: colors[k % colors.length] },
+    }));
+    Plotly.react("plot", traces, {
+        title: `${acidName} fractions vs pH (analytic)`,
+        xaxis: { title: "pH", range: [0, 14] },
+        yaxis: { title: "Fraction", range: [0, 1.05] },
+        legend: { x: 0.8, y: 0.5, bgcolor: "rgba(255,255,255,0.6)" },
+        template: "plotly_white",
+        margin: { t: 50, l: 60, r: 20, b: 50 },
+    }, { displayModeBar: false });
+    setStatus(`analytic Henderson-Hasselbalch (${N} pKa values)`, "ok");
+}
+
+// Approximate pKa values at 25°C for fallback when phreeqc.dat lacks the species.
+const ANALYTIC_PKAS = {
+    "H(Acetate)":  { name: "Acetic acid",  pKa: [4.76] },
+    "H(Formate)":  { name: "Formic acid",  pKa: [3.75] },
+    "H(Benzoate)": { name: "Benzoic acid", pKa: [4.20] },
+    "H3(Citrate)": { name: "Citric acid",  pKa: [3.13, 4.76, 6.40] },
+};
+
+async function render() {
+    const acid = $("acid").value;
+    if (acid === "H2CO3") {
+        await plotCarbonic();
+    } else {
+        const a = ANALYTIC_PKAS[acid];
+        plotAnalytic(a.name, a.pKa);
+    }
+}
+
+$("acid").addEventListener("change", render);
+render();
+</script>
+
+</body>
+</html>

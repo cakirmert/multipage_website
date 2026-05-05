@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Open Carbonate System</title>
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+</head>
+<body>
+
+<main>
+<h1>Open Carbonate System</h1>
+<div id="narrative" class="card"></div>
+
+<div class="tabs">
+    <button class="tab active" data-panel="graph">Graph view (3-input)</button>
+    <button class="tab"        data-panel="table">Table view (8-input ions)</button>
+</div>
+
+<!-- ─── GRAPH VIEW ─── -->
+<section class="tab-panel active" data-panel="graph">
+    <div class="card">
+        <div class="row">
+            <label class="field">Temperature (°C)
+                <input id="g-T" type="number" value="20" step="0.5" />
+            </label>
+            <label class="field">pCO₂ (ppm)
+                <input id="g-CO2" type="number" value="415" step="1" />
+            </label>
+            <label class="field">TA (µmol / kgw)
+                <input id="g-TA" type="number" value="2500" step="10" />
+            </label>
+            <button id="g-run">Compute</button>
+            <span id="g-status" class="status">loading WASM…</span>
+        </div>
+    </div>
+
+    <div id="g-summary" class="summary-pills"></div>
+
+    <div class="card">
+        <div id="g-plot-bar" style="height: 380px;"></div>
+    </div>
+    <div class="card">
+        <div id="g-plot-bjerrum" style="height: 400px;"></div>
+    </div>
+    <div class="card">
+        <h2>Aqueous species</h2>
+        <div id="g-species-table"></div>
+    </div>
+</section>
+
+<!-- ─── TABLE VIEW (11-input) ─── -->
+<section class="tab-panel" data-panel="table">
+    <div class="card">
+        <h2>Inputs</h2>
+        <p class="note">
+            Enter water composition. All ion concentrations are in µmol / kg<sub>water</sub>;
+            alkalinity is in µeq / kg<sub>water</sub>; air pCO₂ is in ppm. Set pCO₂ &gt; 0
+            to equilibrate the solution against an open atmosphere of that partial pressure
+            (matches <code>app.py</code>'s "TABLE" view).
+        </p>
+
+        <h3>Basic parameters</h3>
+        <div class="row">
+            <label class="field">TAcarb (µeq / kgw)
+                <input id="t-TA" type="number" value="2500" step="10" />
+            </label>
+            <label class="field">Water T (°C)
+                <input id="t-T" type="number" value="20" step="0.5" />
+            </label>
+            <label class="field">Air pCO₂ (ppm)
+                <input id="t-CO2" type="number" value="415" step="1" />
+            </label>
+        </div>
+
+        <h3>Cations (µmol / kgw)</h3>
+        <div class="row">
+            <label class="field">Na⁺   <input id="t-Na" type="number" value="0" step="1" /></label>
+            <label class="field">Mg²⁺  <input id="t-Mg" type="number" value="0" step="1" /></label>
+            <label class="field">Ca²⁺  <input id="t-Ca" type="number" value="0" step="1" /></label>
+            <label class="field">K⁺    <input id="t-K"  type="number" value="0" step="1" /></label>
+        </div>
+
+        <h3>Anions (µmol / kgw)</h3>
+        <div class="row">
+            <label class="field">Cl⁻   <input id="t-Cl"  type="number" value="0" step="1" /></label>
+            <label class="field">SO₄²⁻ <input id="t-SO4" type="number" value="0" step="1" /></label>
+            <label class="field">NO₃⁻  <input id="t-NO3" type="number" value="0" step="1" /></label>
+            <label class="field">F⁻    <input id="t-F"   type="number" value="0" step="1" /></label>
+        </div>
+
+        <div class="row" style="margin-top: 1rem;">
+            <button id="t-run">Compute</button>
+            <span id="t-status" class="status">loading WASM…</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>Bulk results</h2>
+        <div id="t-bulk"></div>
+    </div>
+    <div class="card">
+        <h2>Aqueous species</h2>
+        <div id="t-species"></div>
+    </div>
+    <div class="card">
+        <h2>Saturation indices</h2>
+        <p class="note">
+            Highlighted rows mean the solution is supersaturated (SI &gt; 0 or IAP/Ksp &gt; 1).
+            Saturation indices are only meaningful when the constituent elements are present
+            in solution; otherwise PHREEQC returns the sentinel <code>−999.999</code>.
+        </p>
+        <div id="t-si"></div>
+    </div>
+</section>
+
+<div class="card">
+    <h2>References</h2>
+    <div id="refs"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome, setupTabs, makeTable, renderMarkdownUrl } from "../js/common.js";
+import { getPhreeqc, fmtSci, fmtNum } from "../js/phreeqc.js";
+
+setupChrome({
+    title: "Open Carbonate System",
+    crumbs: [["Home", "../index.html"], ["Open Carbonate System", "#"]],
+});
+setupTabs();
+renderMarkdownUrl("../assets/markdown/narrative_improved.md", "#narrative");
+renderMarkdownUrl("../assets/markdown/references.md",         "#refs");
+
+const $ = (id) => document.getElementById(id);
+const setStatus = (idEl, msg, cls = "") => { const s = $(idEl); s.textContent = msg; s.className = "status " + cls; };
+
+// ─── INIT WASM ───
+let phr;
+try {
+    phr = await getPhreeqc();
+    setStatus("g-status", "ready", "ok");
+    setStatus("t-status", "ready", "ok");
+} catch (e) {
+    setStatus("g-status", e.message, "err");
+    setStatus("t-status", e.message, "err");
+    throw e;
+}
+
+// ──────────────────────────────────────────────────────────────────────────
+//  GRAPH VIEW (mirrors app.py update_graph_2)
+// ──────────────────────────────────────────────────────────────────────────
+function runGraph(temp, pCO2_ppm, TA_umol) {
+    const log10pCO2 = Math.log10(pCO2_ppm * 1e-6);
+    const input = `
+SOLUTION 1
+    units      umol/kgw
+    temp       ${temp}
+    Alkalinity ${TA_umol}
+    Na         ${TA_umol}
+EQUILIBRIUM_PHASES 1
+    CO2(g)     ${log10pCO2}
+SELECTED_OUTPUT 1
+    -reset            false
+    -pH               true
+    -temperature      true
+    -ionic_strength   true
+    -totals           C(4)
+    -molalities       HCO3- CO3-2 CO2 H+ OH-
+USER_PUNCH 1
+    -headings SC
+    10 PUNCH SC
+END
+`;
+    return phr.runLast(input);
+}
+
+function renderGraph() {
+    setStatus("g-status", "running PHREEQC…");
+    const T  = Number($("g-T").value);
+    const CO2 = Number($("g-CO2").value);
+    const TA  = Number($("g-TA").value);
+    let r;
+    try { r = runGraph(T, CO2, TA); }
+    catch (e) { setStatus("g-status", e.message, "err"); return; }
+
+    const d = r.data;
+    const pH = d["pH"], sc = d["SC"];
+    const C4 = d["C(4)(mol/kgw)"];
+    const HCO3 = d["m_HCO3-(mol/kgw)"], CO3 = d["m_CO3-2(mol/kgw)"], CO2aq = d["m_CO2(mol/kgw)"];
+    const Hp = d["m_H+(mol/kgw)"], OH = d["m_OH-(mol/kgw)"];
+
+    $("g-summary").innerHTML =
+        `<span><b>pH</b> = ${pH.toFixed(3)}</span>` +
+        `<span><b>DIC</b> = ${fmtSci(C4)} mol/kgw</span>` +
+        `<span><b>SC</b> = ${sc.toFixed(2)} µS/cm</span>`;
+
+    Plotly.react("g-plot-bar", [{
+        type: "bar",
+        x: ["HCO3⁻", "CO3²⁻", "CO2(aq)", "H⁺", "OH⁻"],
+        y: [HCO3, CO3, CO2aq, Hp, OH].map(v => v * 1e6),
+        marker: { color: "#149c7d" },
+    }], {
+        title: "Inorganic carbon components in the solution (µmol/kgw)",
+        margin: { t: 50, l: 60, r: 20, b: 50 },
+        yaxis: { type: "log", title: "concentration [µmol/kgw]" },
+    }, { displayModeBar: false });
+
+    // Bjerrum-fraction reference curve, T-corrected.
+    const TK = T + 273.15;
+    const pK1 = 6.3 + (TK - 298.15) * -0.005;
+    const pK2 = 10.3 + (TK - 298.15) * -0.005;
+    const K1 = Math.pow(10, -pK1), K2 = Math.pow(10, -pK2);
+    const pHs = [], a0s = [], a1s = [], a2s = [];
+    for (let p = 0; p <= 14; p += 0.05) {
+        const H = Math.pow(10, -p);
+        const denom = H*H + H*K1 + K1*K2;
+        pHs.push(p);
+        a0s.push(H*H/denom); a1s.push(H*K1/denom); a2s.push(K1*K2/denom);
+    }
+    Plotly.react("g-plot-bjerrum", [
+        { x: pHs, y: a0s, name: "CO₂(aq)", line: { color: "#1f77b4" } },
+        { x: pHs, y: a1s, name: "HCO₃⁻",   line: { color: "#ff7f0e" } },
+        { x: pHs, y: a2s, name: "CO₃²⁻",   line: { color: "#2ca02c" } },
+        { x: [pH, pH], y: [0, 1], mode: "lines",
+          line: { dash: "dot", color: "#444" }, name: `system pH = ${pH.toFixed(2)}` },
+    ], {
+        title: `Bjerrum fractions (analytic, T = ${T} °C)`,
+        margin: { t: 50, l: 60, r: 20, b: 50 },
+        xaxis: { title: "pH" },
+        yaxis: { title: "fraction", range: [0, 1] },
+    }, { displayModeBar: false });
+
+    // Species table
+    const speciesRows = r.header
+        .filter(h => h.startsWith("m_") || h === "C(4)(mol/kgw)")
+        .map(h => ({ species: h.replace(/^m_/, "").replace(/\(mol\/kgw\)$/, ""),
+                     conc: d[h] }));
+    $("g-species-table").innerHTML = makeTable(speciesRows, [
+        { key: "species", label: "Species" },
+        { key: "conc",    label: "concentration (mol/kgw)", fmt: fmtSci },
+    ]);
+
+    setStatus("g-status", "computed in browser", "ok");
+}
+$("g-run").addEventListener("click", renderGraph);
+for (const k of ["g-T", "g-CO2", "g-TA"]) $(k).addEventListener("change", renderGraph);
+renderGraph();
+
+// ──────────────────────────────────────────────────────────────────────────
+//  TABLE VIEW (mirrors app.py update_graph) — 11 numeric inputs
+// ──────────────────────────────────────────────────────────────────────────
+function runTable(opts) {
+    const { TA, T, pCO2, Na, Mg, Ca, K, Cl, SO4, NO3, F } = opts;
+
+    // PHREEQC SOLUTION block. Ions get the same name → element mapping as
+    // app.py:485-495: Na, K, Ca, Mg, F, Cl, S (for SO4 via S element),
+    // N(3) for NO3 (yes, app.py uses N(3) for "NO3-" in the original code).
+    // Note: PHREEQC's default element symbol for nitrate-equivalent species
+    // is N(5); we follow what the original site uses.
+    const lines = [
+        "SOLUTION 1",
+        "    units      umol/kgw",
+        "    density    1.000",
+        `    temp       ${T}`,
+        ...(Na  ? [`    Na         ${Na}`]  : []),
+        ...(K   ? [`    K          ${K}`]   : []),
+        ...(Ca  ? [`    Ca         ${Ca}`]  : []),
+        ...(Mg  ? [`    Mg         ${Mg}`]  : []),
+        ...(F   ? [`    F          ${F}`]   : []),
+        ...(Cl  ? [`    Cl         ${Cl}`]  : []),
+        ...(NO3 ? [`    N(3)       ${NO3}`] : []),
+        ...(SO4 ? [`    S          ${SO4}`] : []),
+        `    Alkalinity ${TA}`,
+    ];
+    if (pCO2 > 0) {
+        lines.push("EQUILIBRIUM_PHASES 1");
+        lines.push(`    CO2(g)     ${Math.log10(pCO2 * 1e-6)}`);
+    }
+    // SELECTED_OUTPUT: pH, T, IS, totals for major elements + every aqueous species
+    // PHREEQC tracks for these elements, plus SI for the common minerals.
+    lines.push(`SELECTED_OUTPUT 1
+    -reset                false
+    -pH                   true
+    -temperature          true
+    -ionic_strength       true
+    -totals               C(4) Na Mg Ca K Cl S F N(3)
+    -molalities           HCO3- CO3-2 CO2 H+ OH- Na+ NaCO3- NaHCO3 Ca+2 CaCO3 CaHCO3+ Mg+2 MgCO3 MgHCO3+ K+ Cl- SO4-2 HSO4- F- HF NO3-
+    -saturation_indices   Calcite Aragonite Dolomite Gypsum Anhydrite Halite Fluorite
+USER_PUNCH 1
+    -headings SC
+    10 PUNCH SC
+END`);
+    return phr.runLast(lines.join("\n"));
+}
+
+function renderTable() {
+    setStatus("t-status", "running PHREEQC…");
+    const num = id => Number($("t-" + id).value) || 0;
+    const opts = {
+        T:    num("T"), pCO2: num("CO2"), TA: num("TA"),
+        Na:   num("Na"), Mg:  num("Mg"),  Ca: num("Ca"), K: num("K"),
+        Cl:   num("Cl"), SO4: num("SO4"), NO3: num("NO3"), F: num("F"),
+    };
+    let r;
+    try { r = runTable(opts); }
+    catch (e) { setStatus("t-status", e.message, "err"); return; }
+
+    const d = r.data;
+
+    // ── bulk numbers ──
+    const bulk = [
+        { var: "pH",                                  val: d["pH"] },
+        { var: "Specific conductance EC (µS/cm)",     val: d["SC"] },
+        { var: "Ionic strength (mol/kgw)",            val: d["mu"] },
+        { var: "DIC (total C(4)) [mol/kgw]",          val: d["C(4)(mol/kgw)"] },
+        { var: "Temperature (°C)",                    val: d["temp(C)"] },
+    ];
+    $("t-bulk").innerHTML = makeTable(bulk, [
+        { key: "var", label: "Variable" },
+        { key: "val", label: "Value", fmt: (v) => fmtNum(v) },
+    ]);
+
+    // ── species ──
+    const speciesCols = r.header.filter(h => h.startsWith("m_"));
+    const speciesRows = speciesCols.map(h => ({
+        species: h.replace(/^m_/, "").replace(/\(mol\/kgw\)$/, ""),
+        conc:    d[h],
+    }));
+    $("t-species").innerHTML = makeTable(speciesRows, [
+        { key: "species", label: "Species" },
+        { key: "conc",    label: "concentration (mol/kgw)", fmt: fmtSci },
+    ]);
+
+    // ── saturation indices ──
+    const siCols = r.header.filter(h => h.startsWith("si_"));
+    const siRows = siCols.map(h => ({
+        mineral: h.replace(/^si_/, ""),
+        si:      d[h],
+        iap:     d[h] === null || d[h] <= -999 ? null : Math.pow(10, d[h]),
+    }));
+    $("t-si").innerHTML = makeTable(siRows, [
+        { key: "mineral", label: "Mineral" },
+        { key: "si",      label: "Saturation index (SI)", fmt: fmtNum,
+          condClass: (v) => (v !== null && v > 0 ? "danger" : "") },
+        { key: "iap",     label: "IAP / Ksp",             fmt: fmtSci,
+          condClass: (v) => (v !== null && v > 1 ? "danger" : "") },
+    ]);
+
+    setStatus("t-status", "computed in browser", "ok");
+}
+$("t-run").addEventListener("click", renderTable);
+for (const k of ["TA","T","CO2","Na","Mg","Ca","K","Cl","SO4","NO3","F"])
+    $("t-" + k).addEventListener("change", renderTable);
+renderTable();
+</script>
+
+</body>
+</html>

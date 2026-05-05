@@ -1,0 +1,77 @@
+[
+  {
+    "mineral": "Quartz",
+    "log_rate": -13.39,
+    "molar_volume_cm3_per_mol": 22.688
+  },
+  {
+    "mineral": "Kaolinite",
+    "log_rate": -13.28,
+    "molar_volume_cm3_per_mol": 99.52
+  },
+  {
+    "mineral": "Muscovite",
+    "log_rate": -13.07,
+    "molar_volume_cm3_per_mol": 140.71
+  },
+  {
+    "mineral": "Epidote",
+    "log_rate": -12.61,
+    "molar_volume_cm3_per_mol": 139.2
+  },
+  {
+    "mineral": "Microcline",
+    "log_rate": -12.5,
+    "molar_volume_cm3_per_mol": 108.741
+  },
+  {
+    "mineral": "Prehnite",
+    "log_rate": -12.41,
+    "molar_volume_cm3_per_mol": 140.33
+  },
+  {
+    "mineral": "Albite",
+    "log_rate": -12.26,
+    "molar_volume_cm3_per_mol": 100.07
+  },
+  {
+    "mineral": "Sanidine",
+    "log_rate": -12.0,
+    "molar_volume_cm3_per_mol": 109.008
+  },
+  {
+    "mineral": "Gibbsite",
+    "log_rate": -11.45,
+    "molar_volume_cm3_per_mol": 31.956
+  },
+  {
+    "mineral": "Enstatite",
+    "log_rate": -10.0,
+    "molar_volume_cm3_per_mol": 31.276
+  },
+  {
+    "mineral": "Diopside",
+    "log_rate": -10.15,
+    "molar_volume_cm3_per_mol": 66.09
+  },
+  {
+    "mineral": "Forsterite",
+    "log_rate": -9.5,
+    "molar_volume_cm3_per_mol": 43.79
+  },
+  {
+    "mineral": "Nepheline",
+    "log_rate": -8.55,
+    "molar_volume_cm3_per_mol": 55.16
+  },
+  {
+    "mineral": "Anorthite",
+    "log_rate": -8.55,
+    "molar_volume_cm3_per_mol": 109.72
+  },
+  {
+    "mineral": "Wollastonite",
+    "log_rate": -8.0,
+    "molar_volume_cm3_per_mol": 39.93
+  }
+]

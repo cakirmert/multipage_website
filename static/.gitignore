@@ -1,0 +1,9 @@
+# Build chain — only needed when rebuilding the WASM. Not part of the runtime.
+emsdk/
+iphreeqc-src/
+iphreeqc-build/
+lib/
+
+# Local-only artifacts
+*.log
+.DS_Store

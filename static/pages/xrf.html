@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>XRF Mineral Oxide Simulator</title>
+</head>
+<body>
+
+<main>
+<h1>XRF Oxide Simulator</h1>
+<p class="note">
+    Convert any mineral chemical formula into theoretical XRF oxide weight fractions. Pick
+    a mineral from the RRUFF database (~5700 entries) or type any formula you like.
+</p>
+
+<div class="card">
+    <h3>Mineral</h3>
+    <input id="search" type="text" placeholder="Type a mineral name or formula…" style="width: 100%; padding: .5rem; font-size: 1rem;" />
+    <select id="mineral" size="10" style="width: 100%; margin-top: .5rem; font-family: ui-monospace, monospace;"></select>
+
+    <h3 style="margin-top: 1rem;">Or enter a custom formula</h3>
+    <input id="custom" type="text" placeholder="e.g. CaCO3 or Mg2SiO4 or KAl(SO4)2(H2O)12"
+           style="width: 100%; padding: .5rem; font-size: 1rem; font-family: ui-monospace, monospace;" />
+</div>
+
+<div class="card">
+    <h2>Oxide composition</h2>
+    <div id="status" class="status">loading mineral list…</div>
+    <div id="formula-display" style="font-family: ui-monospace, monospace; margin: .5rem 0;"></div>
+    <div id="oxides"></div>
+</div>
+</main>
+
+<script type="module">
+import { setupChrome, makeTable } from "../js/common.js";
+
+setupChrome({
+    title: "XRF Oxides",
+    crumbs: [["Home", "../index.html"], ["XRF Oxides", "#"]],
+});
+
+const $ = (id) => document.getElementById(id);
+
+const [elementsW, minerals] = await Promise.all([
+    fetch("../assets/data/elements.json").then(r => r.json()),
+    fetch("../assets/data/minerals_rruff.json").then(r => r.json()),
+]);
+
+// Element-to-oxide stoichiometry table from app.py:914.
+const OXIDES = {
+    Si: "SiO2",  Al: "Al2O3", Ca: "CaO",   Mg: "MgO",   Na: "Na2O",  K: "K2O",
+    Mn: "MnO",   Ti: "TiO2",  Fe: "Fe2O3", P:  "P2O5",
+    Ni: "NiO",   Co: "CoO",   Cr: "Cr2O3", Cu: "CuO",   Zn: "ZnO",
+    Ag: "Ag2O",  Pb: "PbO",   V:  "V2O5",  Mo: "MoO3",  W:  "WO3",
+    C:  "CO2",   H:  "H2O",   S:  "SO3",   As: "As2O3", Sb: "Sb2O3",
+};
+
+// Recursive formula parser. app.py:925-946.
+const ATOM_RE = /([A-Z][a-z]?)(\d*)/y;
+function parseFormula(formula) {
+    const stack = [{}];
+    let i = 0;
+    while (i < formula.length) {
+        const ch = formula[i];
+        if (/[A-Z]/.test(ch)) {
+            ATOM_RE.lastIndex = i;
+            const m = ATOM_RE.exec(formula);
+            if (!m) { i++; continue; }
+            const el = m[1];
+            const n  = m[2] === "" ? 1 : Number(m[2]);
+            stack[stack.length - 1][el] = (stack[stack.length - 1][el] || 0) + n;
+            i += m[0].length;
+        } else if (ch === "(") {
+            stack.push({}); i++;
+        } else if (ch === ")") {
+            i++;
+            const m = /\d*/y; m.lastIndex = i;
+            const mm = m.exec(formula);
+            const mul = mm[0] === "" ? 1 : Number(mm[0]);
+            const grp = stack.pop();
+            for (const [el, n] of Object.entries(grp)) {
+                stack[stack.length - 1][el] = (stack[stack.length - 1][el] || 0) + n * mul;
+            }
+            i += mm[0].length;
+        } else {
+            i++;
+        }
+    }
+    return stack[stack.length - 1];
+}
+
+// Convert atoms → oxide weight fractions. app.py:948-961.
+function oxideBreakdown(formula) {
+    const atoms = parseFormula(formula);
+    const molMass = Object.entries(atoms)
+        .reduce((s, [e, n]) => s + (elementsW[e] || 0) * n, 0);
+    if (molMass === 0) return null;
+
+    const wt = {};
+    for (const [el, n] of Object.entries(atoms)) {
+        const ox = OXIDES[el]; if (!ox) continue;
+        const oxAtoms = parseFormula(ox);
+        const oxMass = Object.entries(oxAtoms)
+            .reduce((s, [e, m]) => s + (elementsW[e] || 0) * m, 0);
+        wt[ox] = oxMass * (n / oxAtoms[el]) / molMass * 100;
+    }
+    wt["LOI"]          = (wt["H2O"] || 0) + (wt["CO2"] || 0);
+    wt["weight sum %"] = Object.values(wt).reduce((a, b) => a + b, 0) - wt["LOI"];
+    return wt;
+}
+
+// Build the dropdown.
+const sel = $("mineral");
+function renderList(filter = "") {
+    const needle = filter.toLowerCase();
+    sel.innerHTML = "";
+    let count = 0;
+    for (const m of minerals) {
+        if (count >= 300) break;
+        const text = `${m.name} (${m.formula})`;
+        if (!needle || text.toLowerCase().includes(needle)) {
+            const opt = document.createElement("option");
+            opt.value = m.formula;
+            opt.textContent = text;
+            sel.appendChild(opt);
+            count++;
+        }
+    }
+    $("status").textContent = `showing ${count} of ${minerals.length} minerals`;
+}
+renderList();
+
+function render(formula) {
+    if (!formula) {
+        $("formula-display").textContent = "";
+        $("oxides").innerHTML = "";
+        return;
+    }
+    const wt = oxideBreakdown(formula);
+    $("formula-display").innerHTML = `<b>Formula:</b> ${formula}`;
+    if (!wt) { $("oxides").innerHTML = `<p>Could not parse formula.</p>`; return; }
+
+    // Order: main oxides (skip H2O/CO2 since they show under LOI), LOI parent, ⤷ children, weight sum.
+    const main = Object.values(OXIDES).filter(o => o !== "H2O" && o !== "CO2");
+    const seen = new Set();
+    const rows = [];
+    for (const ox of main) {
+        if (seen.has(ox)) continue;
+        seen.add(ox);
+        rows.push({ oxide: ox, pct: wt[ox] || 0 });
+    }
+    rows.push({ oxide: "LOI",           pct: wt["LOI"]          || 0, _loi: true });
+    rows.push({ oxide: "⤷ H2O",         pct: wt["H2O"]          || 0, _loi_child: true });
+    rows.push({ oxide: "⤷ CO2",         pct: wt["CO2"]          || 0, _loi_child: true });
+    rows.push({ oxide: "weight sum %",  pct: wt["weight sum %"] || 0, _sum: true });
+
+    $("oxides").innerHTML = makeTable(rows, [
+        { key: "oxide", label: "Oxide" },
+        { key: "pct",   label: "%", fmt: (v) => v.toFixed(3),
+          condClass: (v, row) => row._sum ? "danger" : (row._loi || row._loi_child) ? "warning" : "" },
+    ]);
+}
+
+$("search").addEventListener("input", () => renderList($("search").value));
+sel.addEventListener("change", () => { $("custom").value = ""; render(sel.value); });
+$("custom").addEventListener("input", () => render($("custom").value.trim()));
+
+// Initial render: pick first mineral with a clean formula.
+sel.selectedIndex = 0;
+render(sel.value);
+</script>
+
+</body>
+</html>
