@@ -74,37 +74,64 @@ function countHInSpecies(species, core) {
 
 async function plotCarbonic() {
     setStatus("running 141 PHREEQC solves…");
-    // Carbonic acid is special-cased in app.py:2038-2046: total CO2 / HCO3 / CO3.
+    // Carbonic acid speciation by pH-fixing PHREEQC at each target pH and reading
+    // the molalities of CO2/HCO3-/CO3-2.
+    //
+    // PHREEQC layout subtleties this method depends on:
+    //
+    //  * The pseudo-phase `Fix_H+` (with reaction H+ = H+, log_k 0) is used as a
+    //    target for EQUILIBRIUM_PHASES.  Setting its saturation index to -target
+    //    forces the activity of H+ to 10^(-target), i.e. pH = target.
+    //  * `PHASES` block must appear in the SAME simulation as the SOLUTION /
+    //    EQUILIBRIUM_PHASES that reference it.  An `END` between them means
+    //    Fix_H+ is undefined when first referenced and PHREEQC aborts.
+    //  * EQUILIBRIUM_PHASES needs a reactant (HCl or NaOH) that PHREEQC can
+    //    DISSOLVE (positive direction only).  To raise pH from natural we add
+    //    NaOH; to lower it we add HCl.  Wrong direction → no convergence.
+    //
+    // We pick the right reactant per step from the natural pH found once at startup.
     const totalConc = 1e-3;
     const pHs = [];
     const f_CO2 = [], f_HCO3 = [], f_CO3 = [];
 
-    // Use FIX_PH via NaOH or HCl to drive pH at each step.  The actual PHREEQC trick:
-    // create a solution with the acid total concentration, then equilibrate against a fix-pH
-    // pseudo-phase using HCl/NaOH as the proton source.
-    for (let p = 0; p <= 14.001; p += 0.1) {
-        const target = Math.round(p * 10) / 10;
-        const input = `
+    // Step 1: natural pH of unforced solution (one solve, used only to choose
+    //         direction for the per-step solves below).
+    const baseline = phr.runLast(`
 SOLUTION 1
     units      mol/kgw
     temp       20
     C(4)       ${totalConc}
-    Na         ${totalConc}
-EQUILIBRIUM_PHASES 1
-    Fix_H+     -${target.toFixed(3)} HCl 10
 SELECTED_OUTPUT 1
-    -reset       false
-    -pH          true
-    -totals      C(4)
-    -molalities  CO2 HCO3- CO3-2
+    -reset      false
+    -pH         true
+    -totals     C(4)
+    -molalities CO2 HCO3- CO3-2
 END
+`);
+    const naturalPH = baseline.data["pH"];
+
+    // Step 2: sweep pH 0–14, picking HCl or NaOH per target.
+    for (let p = 0; p <= 14.001; p += 0.1) {
+        const target = Math.round(p * 10) / 10;
+        const reactant = target < naturalPH ? "HCl 10" : "NaOH 10";
+        const input = `
 PHASES
     Fix_H+
     H+ = H+
     log_k 0.0
+SOLUTION 1
+    units      mol/kgw
+    temp       20
+    C(4)       ${totalConc}
+EQUILIBRIUM_PHASES 1
+    Fix_H+ -${target.toFixed(3)} ${reactant}
+SELECTED_OUTPUT 1
+    -reset      false
+    -pH         true
+    -totals     C(4)
+    -molalities CO2 HCO3- CO3-2
 END
 `;
-        // Try to run; if Fix_H+ phase definition is parsed mid-run, this is harmless on subsequent calls.
         try {
             const r = phr.runLast(input);
             const co2  = r.data["m_CO2(mol/kgw)"]   ?? 0;
@@ -113,9 +140,9 @@ END
             const tot  = co2 + hco3 + co3;
             if (tot > 0) {
                 pHs.push(target);
-                f_CO2.push(co2 / tot);
+                f_CO2.push(co2  / tot);
                 f_HCO3.push(hco3 / tot);
-                f_CO3.push(co3 / tot);
+                f_CO3.push(co3  / tot);
             }
         } catch (e) {
             console.warn("step pH=" + target, e.message);
