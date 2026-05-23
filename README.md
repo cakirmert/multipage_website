@@ -1,30 +1,56 @@
-# Hello world
+# Weathering Tools
 
-Ene mene muh und draus bist du. Draus bist du noch lange nicht, musst erst sagen wie alt du bist.
+Interactive geochemistry calculators for enhanced-weathering research,
+carbonate chemistry, charge-balance checking, mineral dissolution, Bjerrum
+plots, and XRF oxide conversion.
 
-Wer, wie, was, wieso, weshalb, warum? – Wer nicht fragt bleibt dumm!
+The current deployable site lives in [`static/`](static/) and is intended for
+`tools.enhanced-weathering.de`. It is a pure
+client-side port: HTML, CSS, JavaScript, JSON assets, and a WebAssembly PHREEQC
+runtime. No Python server is needed for production hosting.
 
+## Run locally
 
-# Basic structure
+ES modules, `fetch`, and WebAssembly need HTTP, so serve the `static/` folder:
 
-The app.py is the main file. It includes all apps from the whole webpage. It has a routing function and describes the home, impressum, etc.
-Inside the app.py file you can find all code required to generate the plots.
+```sh
+cd static
+python -m http.server 8080
+```
 
+Open <http://localhost:8080>.
 
+## Deployment
 
-# How to run it ?
+GitHub Pages deployment is configured in `.github/workflows/pages.yml`.
 
-Check out  https://dash.plotly.com/tutorial . To launch the app, type into your terminal the command 
-To run it locally type :**python app.py**
+The current repository setting should be:
 
-# Update
+1. Open GitHub repository settings.
+2. Go to **Pages**.
+3. Set **Source** to **GitHub Actions**.
 
-Now all is in one single app file app.py . The home and the subpages
+After that, every push to `main`, `master`, or `client-side-port` publishes the
+contents of `static/` to GitHub Pages.
 
-# How to add a new app ?
+## Pull-request previews
 
-You need to make the link to it in the 'home_layout' function. Then inccorpertae the path at the 'display_page' function. Then teh user can find the path and is able to navigate to the app.
-Next one needs to design a new design function for the new page this is then called by the 'display_page' function. Call the function  'xxxx_layout' .
-Inside this function one designs how the page looks like. Below we need the @app_callback and the plotting function for the interactive plot in the new app.
+GitHub Pages has one active publishing source per repository. The current
+GitHub Actions setup is the simplest way to keep `tools.enhanced-weathering.de`
+updated. Per-PR previews can be added later by switching Pages to a `gh-pages`
+branch publishing model, or by adding a preview host such as Cloudflare Pages or
+Vercel.
 
+## Credits
 
+Project credit is shown on the site in
+[`static/pages/credits.html`](static/pages/credits.html). In short: Lukas Rieder
+owns the main scientific direction, content choices, and project curation; Mert
+Cakir contributed structure, app implementation work, performance/stability
+fixes, the pure client-side port, and the GitHub Pages/preview setup reflected
+in the repository history.
+
+## More details
+
+See [`static/README.md`](static/README.md) for the static app layout,
+validation commands, and WebAssembly runtime notes.

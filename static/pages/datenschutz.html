@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -7,18 +7,122 @@
 </head>
 <body>
 
-<main>
-<div id="content"></div>
+<main class="legal-page">
+    <h1>Datenschutzerkl&auml;rung</h1>
+    <p class="meta">Stand: 23. Mai 2026.</p>
+
+    <section>
+        <h2>Verantwortlicher</h2>
+        <address>Lukas Rieder
+Universit&auml;t Hamburg
+Bundesstra&szlig;e 55
+20146 Hamburg
+Deutschland</address>
+        <p>
+            Tel.: <a href="tel:+4940428384992">+49 40 42838-4992</a><br />
+            E-Mail: <a href="mailto:lukas.rieder@uni-hamburg.de">lukas.rieder@uni-hamburg.de</a>
+        </p>
+        <p>
+            Die Universit&auml;t Hamburg ist eine K&ouml;rperschaft des &ouml;ffentlichen
+            Rechts und wird gesetzlich vertreten durch Univ.-Prof. Dr. Hauke
+            Heekeren, Pr&auml;sident der Universit&auml;t Hamburg, Mittelweg 177,
+            20148 Hamburg.
+        </p>
+    </section>
+
+    <section>
+        <h2>Datenschutzbeauftragte*r</h2>
+        <address>Datenschutzbeauftragte*r der Universit&auml;t Hamburg
+Mittelweg 177
+20148 Hamburg</address>
+        <p>E-Mail: <a href="mailto:datenschutz@uni-hamburg.de">datenschutz@uni-hamburg.de</a></p>
+    </section>
+
+    <section>
+        <h2>Bereitstellung der Website</h2>
+        <p>
+            Diese Website wird als statische Website &uuml;ber GitHub Pages
+            bereitgestellt. GitHub Pages kann beim Aufruf der Website
+            technische Zugriffsdaten verarbeiten, insbesondere IP-Adresse,
+            Datum und Uhrzeit des Abrufs, angeforderte Dateien, Referrer,
+            Browsertyp, Betriebssystem und HTTP-Status. Diese Verarbeitung ist
+            technisch erforderlich, um die Website auszuliefern und die
+            Sicherheit des Dienstes zu gew&auml;hrleisten.
+        </p>
+        <p>
+            Anbieter ist GitHub, Inc., 88 Colin P Kelly Jr St, San Francisco,
+            CA 94107, USA. Weitere Informationen enth&auml;lt die
+            <a href="https://docs.github.com/en/site-policy/privacy-policies/github-privacy-statement">GitHub Privacy Statement</a>.
+        </p>
+    </section>
+
+    <section>
+        <h2>Client-seitige Berechnungen</h2>
+        <p>
+            Die Eingaben in die Rechner werden im Browser verarbeitet. Der
+            Betreiber dieser Website speichert diese Eingaben nicht und betreibt
+            keine eigene Datenbank, kein Nutzerkonto-System, keine Formulare und
+            kein Tracking.
+        </p>
+        <p>
+            Die Anwendung verwendet keine Analyse-Cookies und keine
+            Werbe- oder Marketingdienste. Browserseitige Abrufe von lokalen
+            JSON-, Markdown-, WebAssembly- und Bilddateien dienen ausschlie&szlig;lich
+            der Funktion der Rechner und Dokumentation.
+        </p>
+    </section>
+
+    <section>
+        <h2>Externe technische Ressourcen</h2>
+        <p>
+            Einige fachliche Textbereiche laden zur Darstellung von Markdown und
+            Formeln technische Bibliotheken von jsDelivr/CDN-Anbietern nach
+            (Marked und KaTeX). Beim Abruf dieser Dateien kann der jeweilige
+            CDN-Anbieter technische Zugriffsdaten erhalten. Die rechtlichen
+            Seiten selbst sind statisches HTML und laden diese externen
+            Bibliotheken nicht.
+        </p>
+    </section>
+
+    <section>
+        <h2>Rechtsgrundlagen</h2>
+        <p>
+            Soweit die Bereitstellung der Website und Sicherheitsprotokolle
+            personenbezogene Daten betreffen, erfolgt die Verarbeitung auf
+            Grundlage von Art. 6 Abs. 1 lit. e DSGVO in Verbindung mit den
+            einschl&auml;gigen hochschul- und datenschutzrechtlichen Vorschriften
+            oder, soweit anwendbar, Art. 6 Abs. 1 lit. f DSGVO zur sicheren und
+            stabilen Bereitstellung der Website.
+        </p>
+    </section>
+
+    <section>
+        <h2>Rechte betroffener Personen</h2>
+        <p>Betroffene Personen haben nach Ma&szlig;gabe der DSGVO insbesondere folgende Rechte:</p>
+        <ul>
+            <li>Auskunft nach Art. 15 DSGVO</li>
+            <li>Berichtigung nach Art. 16 DSGVO</li>
+            <li>L&ouml;schung nach Art. 17 DSGVO</li>
+            <li>Einschr&auml;nkung der Verarbeitung nach Art. 18 DSGVO</li>
+            <li>Daten&uuml;bertragbarkeit nach Art. 20 DSGVO</li>
+            <li>Widerspruch nach Art. 21 DSGVO</li>
+            <li>Beschwerde bei einer Aufsichtsbeh&ouml;rde nach Art. 77 DSGVO</li>
+        </ul>
+        <p>
+            Anfragen k&ouml;nnen an
+            <a href="mailto:datenschutz@uni-hamburg.de">datenschutz@uni-hamburg.de</a>
+            gerichtet werden.
+        </p>
+    </section>
 </main>
 
 <script type="module">
-import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+import { setupChrome } from "../js/common.js";
 
 setupChrome({
     title: "Datenschutz",
     crumbs: [["Home", "../index.html"], ["Datenschutz", "#"]],
 });
-await renderMarkdownUrl("../assets/markdown/datenschutz.md", "#content");
 </script>
 
 </body>

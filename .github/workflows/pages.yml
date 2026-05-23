@@ -1,10 +1,5 @@
-# Deploy the static/ folder to GitHub Pages on every push to a feature branch.
-# This is what lets reviewers see a live preview of any branch — including
-# pull-request branches — at https://<owner>.github.io/<repo>/.
-#
-# Repo settings → Pages → Source must be set to "GitHub Actions" once for this
-# to take effect. (One-time, then every push to the configured branches builds
-# automatically.)
+# Deploy the static/ folder to GitHub Pages.
+# Repo settings -> Pages -> Source must stay set to "GitHub Actions".
 
 name: Deploy static site to Pages
 
@@ -18,7 +13,6 @@ permissions:
   pages: write
   id-token: write
 
-# Allow only one concurrent deployment.
 concurrency:
   group: pages
   cancel-in-progress: false
@@ -31,8 +25,6 @@ jobs:
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          # Serve the static/ folder verbatim. No build step required — every
-          # asset (HTML, JS, WASM, JSON) is already a shippable artefact.
           path: ./static
 
   deploy:

@@ -25,19 +25,64 @@ body {
 }
 header.site {
     border-bottom: 1px solid var(--gray-200);
-    padding: 1.5rem 1rem;
+    padding: .85rem 1rem;
+    background: #fff;
 }
 header.site .inner {
     max-width: 1160px; margin: 0 auto;
-    display: flex; align-items: center; gap: 1.5rem;
+    display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
 }
-header.site img { height: 60px; }
+header.site .brand {
+    display: inline-flex; align-items: center; gap: .75rem;
+    color: var(--gray-900); text-decoration: none;
+    min-width: 0;
+}
+header.site .brand-mark {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 2.15rem; height: 2.15rem; border-radius: .45rem;
+    background: #102233; color: #9ee7d2;
+    font-weight: 800; font-size: .78rem;
+}
+header.site .brand-text {
+    display: flex; flex-direction: column; line-height: 1.15;
+}
+header.site .brand-text strong { font-size: 1rem; }
+header.site .brand-text span {
+    color: var(--gray-700); font-size: .8rem;
+}
+header.site .header-links {
+    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
+    justify-content: flex-end;
+}
+header.site .site-nav {
+    display: flex; align-items: center; gap: .9rem; flex-wrap: wrap;
+    font-size: .9rem; font-weight: 600;
+}
+header.site .site-nav a {
+    color: var(--gray-700); text-decoration: none;
+}
+header.site .site-nav a:hover {
+    color: var(--green); text-decoration: underline;
+}
 header.site .crumbs {
     font-size: .9rem; color: var(--gray-700);
-    flex: 1; text-align: right;
+    text-align: right;
 }
 header.site .crumbs a { color: var(--green); text-decoration: none; }
 header.site .crumbs a:hover { text-decoration: underline; }
+@media (max-width: 720px) {
+    header.site .inner {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: .75rem;
+    }
+    header.site .header-links {
+        justify-content: flex-start;
+    }
+    header.site .crumbs {
+        text-align: left;
+    }
+}
 main {
     max-width: 1160px; margin: 0 auto; padding: 2rem 1rem 4rem;
 }
@@ -116,10 +161,12 @@ html, body { height: 100%; }
 body { display: flex; flex-direction: column; min-height: 100vh; }
 main { flex: 1 0 auto; }
 footer.site {
-    background: #333; color: #fff;
+    background: rgba(8,24,38,.58); color: #fff;
     padding: 1rem; text-align: center;
     margin-top: auto;
     flex-shrink: 0;
+    border-top: 1px solid rgba(255,255,255,.14);
+    backdrop-filter: blur(10px);
 }
 footer.site a { color: #fff; margin: 0 .8rem; text-decoration: none; }
 footer.site a:hover { text-decoration: underline; }
@@ -135,6 +182,42 @@ footer.site a:hover { text-decoration: underline; }
     border-left: 3px solid var(--gray-300);
     padding: .25rem 0 .25rem .75rem; margin: .75rem 0;
 }
+.legal-page {
+    max-width: 860px;
+}
+.legal-page section {
+    border-top: 1px solid var(--gray-200);
+    padding-top: 1rem;
+    margin-top: 1.5rem;
+}
+.legal-page address {
+    font-style: normal;
+    white-space: pre-line;
+}
+.legal-page ul {
+    padding-left: 1.25rem;
+}
+.legal-page .meta {
+    color: var(--gray-700);
+    font-size: .9rem;
+}
+.credit-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+}
+.credit-list {
+    margin: .75rem 0 0;
+}
+.credit-list li {
+    margin-bottom: .45rem;
+}
+.callout {
+    border-left: 4px solid var(--green);
+    background: var(--gray-50);
+    padding: .9rem 1rem;
+    margin: 1rem 0;
+}
 `;
 
 /**
@@ -148,20 +231,37 @@ export function setupChrome({ title = "", crumbs = [] } = {}) {
         s.textContent = STYLE;
         document.head.appendChild(s);
     }
-    if (title) document.title = title + " — Modeling Tools for Geochemistry";
+    if (title) {
+        document.title = title === "Weathering Tools" ? title : title + " - Weathering Tools";
+    }
 
     const crumbsHtml = crumbs.map((c, i) => {
         const [label, href] = c;
         const last = i === crumbs.length - 1;
-        return last ? `<span>${label}</span>` : `<a href="${href}">${label}</a> ›`;
+        return last ? `<span>${label}</span>` : `<a href="${href}">${label}</a> &gt;`;
     }).join(" ");
+    const inSubpage = location.pathname.includes("/pages/");
+    const homeHref = inSubpage ? "../index.html" : "./index.html";
+    const pagesBase = inSubpage ? "../pages/" : "./pages/";
 
     const header = document.createElement("header");
     header.className = "site";
     header.innerHTML = `
         <div class="inner">
-            <a href="../index.html"><img src="../assets/uhh-logo-web.jpg" alt="UHH" /></a>
-            <div class="crumbs">${crumbsHtml}</div>
+            <a class="brand" href="${homeHref}">
+                <span class="brand-mark">WT</span>
+                <span class="brand-text">
+                    <strong>Weathering Tools</strong>
+                    <span>tools.enhanced-weathering.de</span>
+                </span>
+            </a>
+            <div class="header-links">
+                <nav class="site-nav" aria-label="Site">
+                    <a href="${homeHref}">Tools</a>
+                    <a href="https://enhanced-weathering.de/">Main site</a>
+                </nav>
+                ${crumbsHtml ? `<div class="crumbs">${crumbsHtml}</div>` : ""}
+            </div>
         </div>
     `;
     document.body.prepend(header);
@@ -169,9 +269,11 @@ export function setupChrome({ title = "", crumbs = [] } = {}) {
     const footer = document.createElement("footer");
     footer.className = "site";
     footer.innerHTML = `
-        <a href="../pages/impressum.html">Impressum</a>
-        <a href="../pages/datenschutz.html">Datenschutz</a>
-        <a href="../pages/barrierefreiheit.html">Barrierefreiheit</a>
+        <a href="https://enhanced-weathering.de/">Enhanced Weathering</a>
+        <a href="${pagesBase}impressum.html">Impressum</a>
+        <a href="${pagesBase}datenschutz.html">Datenschutz</a>
+        <a href="${pagesBase}barrierefreiheit.html">Barrierefreiheit</a>
+        <a href="${pagesBase}credits.html">Credits</a>
     `;
     document.body.append(footer);
 }

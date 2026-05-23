@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -7,18 +7,73 @@
 </head>
 <body>
 
-<main>
-<div id="content"></div>
+<main class="legal-page">
+    <h1>Erkl&auml;rung zur Barrierefreiheit</h1>
+    <p class="meta">Diese Erkl&auml;rung gilt f&uuml;r die &ouml;ffentliche GitHub-Pages-Bereitstellung dieser Website. Stand: 23. Mai 2026.</p>
+
+    <section>
+        <h2>Stand der Vereinbarkeit</h2>
+        <p>
+            Die Website ist nach aktuellem Stand teilweise mit den Anforderungen
+            der Hamburgischen Barrierefreie Informationstechnik-Verordnung
+            (HmbBITVO) vereinbar. Die Anwendung wurde im Zuge der statischen
+            Client-Side-Portierung strukturiert, semantisch ausgezeichnet und
+            mit wiederverwendbarer Navigation versehen. Eine abschlie&szlig;ende
+            externe Barrierefreiheitspr&uuml;fung steht noch aus.
+        </p>
+    </section>
+
+    <section>
+        <h2>Nicht vollst&auml;ndig barrierefreie Inhalte</h2>
+        <ul>
+            <li>Einzelne interaktive Diagramme und wissenschaftliche Tabellen k&ouml;nnen f&uuml;r Screenreader noch eingeschr&auml;nkt nutzbar sein.</li>
+            <li>Fachliche Formeln und dynamische Ergebnisbereiche ben&ouml;tigen weitere Pr&uuml;fung f&uuml;r Tastaturf&uuml;hrung und Alternativtexte.</li>
+            <li>Einzelne Farbkontraste und Fokuszust&auml;nde werden weiter verbessert.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Feedback und Kontakt</h2>
+        <p>
+            Sind Ihnen M&auml;ngel in Bezug auf Barrierefreiheit aufgefallen,
+            kontaktieren Sie bitte:
+        </p>
+        <address>Lukas Rieder
+Universit&auml;t Hamburg
+Bundesstra&szlig;e 55
+20146 Hamburg
+Deutschland</address>
+        <p>
+            Tel.: <a href="tel:+4940428384992">+49 40 42838-4992</a><br />
+            E-Mail: <a href="mailto:lukas.rieder@uni-hamburg.de">lukas.rieder@uni-hamburg.de</a>
+        </p>
+    </section>
+
+    <section>
+        <h2>Schlichtungsverfahren</h2>
+        <p>
+            Sollte innerhalb von vier Wochen keine zufriedenstellende L&ouml;sung
+            gefunden werden, k&ouml;nnen Sie sich an die Schlichtungsstelle nach
+            &sect; 13a HmbBGG wenden:
+        </p>
+        <address>Schlichtungsstelle HmbBGG
+c/o &Ouml;ffentliche Rechtsauskunft- und Vergleichsstelle (&Ouml;RA)
+Dammtorstra&szlig;e 14
+20354 Hamburg</address>
+        <p>
+            Tel.: <a href="tel:+4940428433056">+49 40 42843-3056</a><br />
+            E-Mail: <a href="mailto:schlichtungsstelle-hmbbgg@soziales.hamburg.de">schlichtungsstelle-hmbbgg@soziales.hamburg.de</a>
+        </p>
+    </section>
 </main>
 
 <script type="module">
-import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+import { setupChrome } from "../js/common.js";
 
 setupChrome({
     title: "Barrierefreiheit",
     crumbs: [["Home", "../index.html"], ["Barrierefreiheit", "#"]],
 });
-await renderMarkdownUrl("../assets/markdown/barrierefreiheit.md", "#content");
 </script>
 
 </body>

@@ -3,114 +3,317 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Modeling Tools for Geochemistry</title>
+<title>Weathering Tools</title>
 <style>
-    /* Hero section override on top of common.js styles */
-    .hero {
-        background-image: linear-gradient(rgba(20,156,125,.85), rgba(13,115,89,.85)), url("./assets/background_image.jpg");
-        background-size: cover; background-position: center;
-        color: white; padding: 4rem 1rem 5rem;
-        text-align: center;
+    html {
+        background: #081826;
     }
-    .hero h1 { font-size: 2.5rem; margin: 0 0 1rem; color: white; }
-    .hero p  { font-size: 1.1rem; max-width: 740px; margin: 0 auto; opacity: 0.95; }
-
+    body.weathering-home {
+        background:
+            linear-gradient(105deg, rgba(8, 24, 38, .88), rgba(16, 92, 74, .78)),
+            url("./assets/background_image.jpg");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        color: #fff;
+    }
+    body.weathering-home header.site {
+        position: absolute;
+        inset: 0 0 auto;
+        z-index: 5;
+        background: transparent;
+        border-bottom: 0;
+    }
+    body.weathering-home header.site .inner {
+        justify-content: flex-end;
+    }
+    body.weathering-home header.site .brand {
+        display: none;
+    }
+    body.weathering-home header.site .site-nav a {
+        color: #fff;
+        text-shadow: 0 1px 10px rgba(0,0,0,.35);
+    }
+    body.weathering-home header.site .site-nav a:hover {
+        color: #9ee7d2;
+    }
+    body.weathering-home footer.site {
+        background: rgba(246, 250, 248, .78);
+        border-top: 1px solid rgba(255,255,255,.35);
+        color: #102233;
+    }
+    body.weathering-home footer.site a {
+        color: #102233;
+    }
+    .tool-hero {
+        color: #fff;
+        padding: 4.75rem 1rem .85rem;
+    }
+    .tool-hero .inner {
+        max-width: 1160px;
+        margin: 0 auto;
+        display: block;
+    }
+    .eyebrow {
+        margin: 0 0 .75rem;
+        color: rgba(255,255,255,.82);
+        font-size: .82rem;
+        font-weight: 700;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+    }
+    .tool-hero h1 {
+        margin: 0;
+        max-width: 760px;
+        color: #fff;
+        font-size: 2.55rem;
+        line-height: 1.05;
+    }
+    .tool-hero p {
+        max-width: 720px;
+        color: #dce8ea;
+        font-size: 1rem;
+        margin: .65rem 0 0;
+    }
+    .site-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 2.6rem;
+        padding: .65rem 1rem;
+        border-radius: .5rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+    .site-link {
+        border: 1px solid rgba(255,255,255,.35);
+        color: #fff;
+    }
+    .tools-shell {
+        max-width: 1160px;
+        margin: 0 auto;
+        padding: 0 1rem 1.75rem;
+    }
+    .tools-panel {
+        background: rgba(246, 250, 248, .88);
+        border: 1px solid rgba(255,255,255,.38);
+        border-radius: .65rem;
+        padding: 1rem;
+        box-shadow: 0 18px 42px rgba(2, 12, 20, .18);
+        backdrop-filter: blur(10px);
+    }
+    .tools-panel .eyebrow {
+        color: #0b6d56;
+    }
+    .section-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: end;
+        margin: 0 0 .8rem;
+    }
+    .section-title h2 {
+        margin: 0;
+        font-size: 1.4rem;
+        color: #102233;
+    }
+    .section-title p {
+        max-width: 560px;
+        color: var(--gray-700);
+        margin: 0;
+        font-size: .95rem;
+    }
     .grid-tools {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.25rem;
-        margin: 3rem auto;
-        max-width: 1160px;
-        padding: 0 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: .85rem;
+        margin-bottom: .85rem;
     }
     .tool-card {
         position: relative;
-        background: white; border: 1px solid var(--gray-200);
-        border-radius: 1rem; padding: 1.5rem;
-        text-decoration: none; color: var(--gray-900);
+        min-height: 10.75rem;
+        background: rgba(255,255,255,.76);
+        border: 1px solid rgba(16,34,51,.08);
+        border-radius: .5rem;
+        padding: 1rem;
+        text-decoration: none;
+        color: var(--gray-900);
         transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
-        display: flex; flex-direction: column;
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
     }
-    .tool-card::before {
-        content: ""; position: absolute; left: 0; top: 0;
-        width: 4px; height: 100%; background: var(--green);
-        transform: scaleY(0); transform-origin: top;
-        transition: transform .2s ease;
-    }
     .tool-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0,0,0,.08);
-        border-color: var(--green);
+        transform: translateY(-3px);
+        box-shadow: 0 10px 28px rgba(8, 24, 38, .10);
+        border-color: #18b98f;
+        background: rgba(255,255,255,.9);
     }
-    .tool-card:hover::before { transform: scaleY(1); }
     .tool-card h3 {
-        margin: 0 0 .5rem; font-size: 1.15rem;
-        color: var(--green);
+        margin: 0 0 .5rem;
+        font-size: 1.08rem;
+        color: #102233;
     }
-    .tool-card p { margin: 0; font-size: .92rem; color: var(--gray-700); flex: 1; }
+    .tool-card p {
+        margin: 0;
+        color: var(--gray-700);
+        font-size: .92rem;
+        flex: 1;
+    }
+    .workflow-band {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: .85rem;
+        margin: .85rem 0;
+        border: 1px solid rgba(16,34,51,.08);
+        border-radius: .5rem;
+        padding: 1rem;
+        background: rgba(255,255,255,.64);
+    }
+    .workflow-band div {
+        border-left: 3px solid #18b98f;
+        padding-left: .85rem;
+    }
+    .workflow-band h3 {
+        margin-top: 0;
+        color: #102233;
+    }
+    .workflow-band p {
+        color: var(--gray-700);
+        font-size: .92rem;
+    }
+    .main-site-panel {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: center;
+        border-radius: .5rem;
+        background: rgba(255,255,255,.64);
+        border: 1px solid rgba(16,34,51,.08);
+        color: #102233;
+        padding: .9rem 1rem;
+    }
+    .main-site-panel h2 {
+        color: #102233;
+        margin-top: 0;
+        margin-bottom: 0;
+    }
+    .main-site-panel p {
+        color: var(--gray-700);
+    }
+    .main-site-panel .site-link {
+        border-color: rgba(16,34,51,.28);
+        color: #102233;
+    }
+    .main-site-panel .site-link:hover {
+        background: rgba(16,34,51,.08);
+    }
+    @media (max-width: 780px) {
+        .main-site-panel {
+            grid-template-columns: 1fr;
+        }
+        .tool-hero {
+            padding-top: 4.4rem;
+        }
+        .tool-hero h1 {
+            font-size: 2.2rem;
+        }
+        .section-title,
+        .workflow-band {
+            display: block;
+        }
+        .workflow-band div + div {
+            margin-top: 1rem;
+        }
+    }
 </style>
 </head>
-<body>
+<body class="weathering-home">
 
-<div class="hero">
-    <h1>Modeling Tools for Geochemistry</h1>
-    <p>
-        Interactive calculators for carbonate chemistry, charge-balance checking, and
-        mineral-oxide conversions. Everything runs locally in your browser.
-    </p>
-</div>
+<section class="tool-hero">
+    <div class="inner">
+        <div>
+            <h1>Weathering Tools</h1>
+            <p>
+                Geochemistry tools for enhanced-weathering research: carbonate
+                chemistry, alkalinity interpretation, PHREEQC speciation, mineral
+                dissolution, and mineral-oxide conversions.
+            </p>
+        </div>
+    </div>
+</section>
 
-<div class="grid-tools">
-    <a class="tool-card" href="./pages/open-carbonate.html">
-        <h3>Open Carbonate System</h3>
-        <p>Equilibrium speciation in fresh waters. Two views: a 3-input graph view (T, pCO₂, TA) and the full 11-input table view that takes major ion compositions and returns species, saturation indices, and bulk parameters.</p>
-    </a>
-    <a class="tool-card" href="./pages/seawater.html">
-        <h3>Seawater Carbonate System</h3>
-        <p>Solve the open seawater carbonate system from any two parameters of {TA, DIC, pH, pCO₂}. Returns full speciation plus saturation states for calcite and aragonite.</p>
-    </a>
-    <a class="tool-card" href="./pages/charge-balance.html">
-        <h3>Charge Balance</h3>
-        <p>Verify a major-ion analysis for electrical neutrality and flag errors outside ±5 %.</p>
-    </a>
-    <a class="tool-card" href="./pages/xrf.html">
-        <h3>XRF Oxide Simulator</h3>
-        <p>Convert any mineral formula into theoretical XRF oxide weight fractions. Includes a searchable index of ~5700 RRUFF minerals.</p>
-    </a>
-    <a class="tool-card" href="./pages/mineral-dissolution.html">
-        <h3>Mineral Dissolution (Lasaga)</h3>
-        <p>Lifetime of a spherical crystal at pH 5, 25 °C, using the Lasaga (1994) dissolution rate compilation.</p>
-    </a>
-    <a class="tool-card" href="./pages/forsterite-dissolution.html">
-        <h3>Forsterite Dissolution f(pH, T, r)</h3>
-        <p>Dissolution lifetime of a forsterite crystal as a function of pH, temperature and initial radius (Rimstidt et al. 2012).</p>
-    </a>
-    <a class="tool-card" href="./pages/bjerrum.html">
-        <h3>Bjerrum Plot Explorer</h3>
-        <p>Speciation fractions vs pH for carbonic acid and several organic acids.</p>
-    </a>
-    <a class="tool-card" href="./pages/dic-pco2.html">
-        <h3>DIC vs pCO₂</h3>
-        <p>DIC as a function of atmospheric pCO₂ for total alkalinities from 0 to 50 mmol / kg.</p>
-    </a>
-</div>
+<main class="tools-shell">
+    <div class="tools-panel">
+        <div class="section-title">
+            <div>
+                <p class="eyebrow">interactive calculators</p>
+                <h2>Tools for carbonate and weathering workflows</h2>
+            </div>
+        </div>
+
+        <div class="grid-tools">
+            <a class="tool-card" href="./pages/open-carbonate.html">
+                <h3>Open Carbonate System</h3>
+                <p>Speciation in fresh waters from temperature, pCO2, alkalinity, and major-ion compositions.</p>
+            </a>
+            <a class="tool-card" href="./pages/seawater.html">
+                <h3>Seawater Carbonate System</h3>
+                <p>Solve from any two of total alkalinity, DIC, pH, and pCO2, with calcite/aragonite saturation states.</p>
+            </a>
+            <a class="tool-card" href="./pages/charge-balance.html">
+                <h3>Charge Balance</h3>
+                <p>Check major-ion analyses for electrical neutrality and flag charge-balance error outside common limits.</p>
+            </a>
+            <a class="tool-card" href="./pages/xrf.html">
+                <h3>XRF Oxide Simulator</h3>
+                <p>Convert mineral formulas into theoretical XRF oxide weight fractions with a searchable RRUFF index.</p>
+            </a>
+            <a class="tool-card" href="./pages/mineral-dissolution.html">
+                <h3>Mineral Dissolution</h3>
+                <p>Estimate spherical crystal lifetimes at pH 5 and 25 &deg;C using the Lasaga dissolution-rate compilation.</p>
+            </a>
+            <a class="tool-card" href="./pages/forsterite-dissolution.html">
+                <h3>Forsterite Dissolution</h3>
+                <p>Explore forsterite lifetime as a function of pH, temperature, and initial grain radius.</p>
+            </a>
+            <a class="tool-card" href="./pages/bjerrum.html">
+                <h3>Bjerrum Plot Explorer</h3>
+                <p>Compare acid-base speciation fractions across pH for carbonate and organic-acid systems.</p>
+            </a>
+            <a class="tool-card" href="./pages/dic-pco2.html">
+                <h3>DIC vs pCO2</h3>
+                <p>Inspect DIC response to atmospheric pCO2 across total-alkalinity scenarios.</p>
+            </a>
+        </div>
+
+        <section class="workflow-band" aria-label="How the tools support research">
+            <div>
+                <h3>Screen</h3>
+                <p>Run quick plausibility checks before deeper modeling or lab interpretation.</p>
+            </div>
+            <div>
+                <h3>Explain</h3>
+                <p>Use transparent equations, references, and calculation steps for teaching and review.</p>
+            </div>
+            <div>
+                <h3>Prototype</h3>
+                <p>Test carbonate and mineral-weathering assumptions before building a full project workflow.</p>
+            </div>
+        </section>
+
+        <section class="main-site-panel">
+            <div>
+                <h2>Part of Lukas Rieder's enhanced-weathering work</h2>
+            </div>
+            <a class="site-link" href="https://enhanced-weathering.de/">Visit main site</a>
+        </section>
+    </div>
+</main>
 
 <script type="module">
 import { setupChrome } from "./js/common.js";
-setupChrome({ title: "Geochemistry Tools", crumbs: [] });
-
-// The header that setupChrome injects expects the logo at "../assets/uhh-logo-web.jpg",
-// but on the home page the logo is at "./assets/uhh-logo-web.jpg". Patch it after injection.
-const img = document.querySelector("header.site img");
-if (img) img.src = "./assets/uhh-logo-web.jpg";
-const headerLink = document.querySelector("header.site a");
-if (headerLink) headerLink.href = "./index.html";
-
-// Same patch for footer links so they resolve from the home page.
-for (const a of document.querySelectorAll("footer.site a")) {
-    a.href = a.href.replace("/../pages/", "/pages/");
-}
+setupChrome({ title: "Weathering Tools", crumbs: [] });
 </script>
 
 </body>

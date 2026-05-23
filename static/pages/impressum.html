@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -7,18 +7,95 @@
 </head>
 <body>
 
-<main>
-<div id="content"></div>
+<main class="legal-page">
+    <h1>Impressum</h1>
+    <p class="meta">Angaben gem&auml;&szlig; &sect; 5 DDG. Stand: 23. Mai 2026.</p>
+
+    <section>
+        <h2>Diensteanbieter</h2>
+        <address>Lukas Rieder
+Universit&auml;t Hamburg
+Bundesstra&szlig;e 55
+20146 Hamburg
+Deutschland</address>
+        <p>
+            Tel.: <a href="tel:+4940428384992">+49 40 42838-4992</a><br />
+            E-Mail: <a href="mailto:lukas.rieder@uni-hamburg.de">lukas.rieder@uni-hamburg.de</a>
+        </p>
+    </section>
+
+    <section>
+        <h2>Inhaltlich verantwortlich</h2>
+        <address>Lukas Rieder
+Universit&auml;t Hamburg
+Bundesstra&szlig;e 55
+20146 Hamburg
+Deutschland</address>
+        <p>
+            E-Mail: <a href="mailto:lukas.rieder@uni-hamburg.de">lukas.rieder@uni-hamburg.de</a>
+        </p>
+    </section>
+
+    <section>
+        <h2>Zentrale Angaben der Universit&auml;t Hamburg</h2>
+        <address>Universit&auml;t Hamburg
+Mittelweg 177
+20148 Hamburg
+Deutschland</address>
+        <p>
+            Tel.: <a href="tel:+4940428380">+49 40 42838-0</a><br />
+            Fax: +49 40 42838-9586
+        </p>
+        <p>
+            Die Universit&auml;t Hamburg ist eine K&ouml;rperschaft des &ouml;ffentlichen Rechts.
+            Sie wird gesetzlich vertreten durch Univ.-Prof. Dr. Hauke Heekeren,
+            Pr&auml;sident der Universit&auml;t Hamburg, Mittelweg 177, 20148 Hamburg.
+        </p>
+        <p>
+            Zust&auml;ndige Aufsichtsbeh&ouml;rde: Beh&ouml;rde f&uuml;r Wissenschaft, Forschung,
+            Gleichstellung und Bezirke der Freien und Hansestadt Hamburg,
+            Hamburger Stra&szlig;e 37, 22083 Hamburg.
+        </p>
+        <p>Umsatzsteuer-Identifikationsnummer: DE 245 584 140</p>
+    </section>
+
+    <section>
+        <h2>Hosting</h2>
+        <p>
+            Diese Website ist eine rein statische Client-Side-Anwendung. Die
+            Rechenroutinen, einschlie&szlig;lich PHREEQC/WebAssembly und
+            Karbonatsystem-Berechnungen, laufen im Browser der Nutzerinnen und
+            Nutzer. Der Betreiber dieser Website betreibt keine eigene
+            serverseitige Auswertung der Eingaben.
+        </p>
+        <p>
+            Vorgesehener Hosting-Anbieter: GitHub Pages, ein Dienst von GitHub, Inc.,
+            88 Colin P Kelly Jr St, San Francisco, CA 94107, USA. Beim Aufruf der
+            Website verarbeitet GitHub technisch erforderliche Verbindungsdaten,
+            insbesondere IP-Adresse, Zeitpunkt des Abrufs und Browserinformationen,
+            zur Bereitstellung und Sicherheit des Dienstes.
+        </p>
+    </section>
+
+    <section>
+        <h2>Haftung f&uuml;r Inhalte</h2>
+        <p>
+            Die Inhalte wurden mit Sorgfalt erstellt. F&uuml;r die Richtigkeit,
+            Vollst&auml;ndigkeit und Aktualit&auml;t der wissenschaftlichen Inhalte,
+            Berechnungsmodelle und Beispielwerte kann jedoch keine Gew&auml;hr
+            &uuml;bernommen werden. Die Tools dienen der Lehre, Forschung und
+            Plausibilit&auml;tspr&uuml;fung und ersetzen keine fachliche Einzelfallbewertung.
+        </p>
+    </section>
 </main>
 
 <script type="module">
-import { setupChrome, renderMarkdownUrl } from "../js/common.js";
+import { setupChrome } from "../js/common.js";
 
 setupChrome({
     title: "Impressum",
     crumbs: [["Home", "../index.html"], ["Impressum", "#"]],
 });
-await renderMarkdownUrl("../assets/markdown/impressum.md", "#content");
 </script>
 
 </body>

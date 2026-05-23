@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Credits</title>
+</head>
+<body>
+
+<main class="legal-page">
+    <h1>Credits</h1>
+    <p class="meta">Project credit based on the repository history and merged pull requests.</p>
+
+    <div class="callout">
+        <p>
+            Weathering Tools is Lukas Rieder's geochemistry tools website for
+            enhanced-weathering and carbonate-system research. Lukas chose the
+            scientific direction, selected and added much of the content, and
+            curated the project through accepted pull requests and follow-up changes.
+        </p>
+    </div>
+
+    <section>
+        <h2>Main project direction</h2>
+        <p>
+            <strong>Lukas Rieder</strong> is credited for the core scientific scope,
+            geochemistry tool selection, domain content, teaching/research framing,
+            and the majority of the later feature and text decisions.
+        </p>
+    </section>
+
+    <section>
+        <h2>Contributions by Mert Cakir</h2>
+        <p>
+            <strong>Mert Cakir</strong> contributed project structure and implementation
+            work that appears throughout the repository history, including merged pull
+            requests accepted by Lukas.
+        </p>
+        <ul class="credit-list">
+            <li>Initial repository setup and early client/app structure work.</li>
+            <li>Multi-page navigation, footer structure, and integration of legal pages into the app.</li>
+            <li>Additional calculator/app implementation work, including early second and third app contributions.</li>
+            <li>XRF/mineral table usability improvements, clearer LOI handling, and faster mineral search.</li>
+            <li>Stability fixes around PHREEQPY/PHREEQC instance handling and plot rendering issues.</li>
+            <li>Pure client-side static port of the site, including the WebAssembly PHREEQC runtime.</li>
+            <li>GitHub Pages deployment setup, pull-request preview workflow, and updated static legal/credit pages.</li>
+        </ul>
+    </section>
+
+    <section>
+        <h2>Repository history</h2>
+        <p>
+            The upstream history records multiple merged pull requests from
+            <code>cakirmert</code> into Lukas's repository, including PRs #1 through
+            #9, plus later client-side port work. The commit history remains the
+            source of truth for exact authorship and chronology.
+        </p>
+    </section>
+</main>
+
+<script type="module">
+import { setupChrome } from "../js/common.js";
+
+setupChrome({
+    title: "Credits",
+    crumbs: [["Home", "../index.html"], ["Credits", "#"]],
+});
+</script>
+
+</body>
+</html>
