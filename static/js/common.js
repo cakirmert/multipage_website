@@ -32,28 +32,6 @@ header.site .inner {
     max-width: 1160px; margin: 0 auto;
     display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
 }
-header.site .brand {
-    display: inline-flex; align-items: center; gap: .75rem;
-    color: var(--gray-900); text-decoration: none;
-    min-width: 0;
-}
-header.site .brand-mark {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 2.15rem; height: 2.15rem; border-radius: .45rem;
-    background: #102233; color: #9ee7d2;
-    font-weight: 800; font-size: .78rem;
-}
-header.site .brand-text {
-    display: flex; flex-direction: column; line-height: 1.15;
-}
-header.site .brand-text strong { font-size: 1rem; }
-header.site .brand-text span {
-    color: var(--gray-700); font-size: .8rem;
-}
-header.site .header-links {
-    display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-    justify-content: flex-end;
-}
 header.site .site-nav {
     display: flex; align-items: center; gap: .9rem; flex-wrap: wrap;
     font-size: .9rem; font-weight: 600;
@@ -66,7 +44,9 @@ header.site .site-nav a:hover {
 }
 header.site .crumbs {
     font-size: .9rem; color: var(--gray-700);
-    text-align: right;
+    flex: 1;
+    min-width: 12rem;
+    text-align: left;
 }
 header.site .crumbs a { color: var(--green); text-decoration: none; }
 header.site .crumbs a:hover { text-decoration: underline; }
@@ -75,9 +55,6 @@ header.site .crumbs a:hover { text-decoration: underline; }
         align-items: flex-start;
         flex-direction: column;
         gap: .75rem;
-    }
-    header.site .header-links {
-        justify-content: flex-start;
     }
     header.site .crumbs {
         text-align: left;
@@ -248,20 +225,11 @@ export function setupChrome({ title = "", crumbs = [] } = {}) {
     header.className = "site";
     header.innerHTML = `
         <div class="inner">
-            <a class="brand" href="${homeHref}">
-                <span class="brand-mark">WT</span>
-                <span class="brand-text">
-                    <strong>Weathering Tools</strong>
-                    <span>tools.enhanced-weathering.de</span>
-                </span>
-            </a>
-            <div class="header-links">
-                <nav class="site-nav" aria-label="Site">
-                    <a href="${homeHref}">Tools</a>
-                    <a href="https://enhanced-weathering.de/">Main site</a>
-                </nav>
-                ${crumbsHtml ? `<div class="crumbs">${crumbsHtml}</div>` : ""}
-            </div>
+            ${crumbsHtml ? `<nav class="crumbs" aria-label="Breadcrumb">${crumbsHtml}</nav>` : ""}
+            <nav class="site-nav" aria-label="Site">
+                <a href="${homeHref}">Tools</a>
+                <a href="https://enhanced-weathering.de/">Main site</a>
+            </nav>
         </div>
     `;
     document.body.prepend(header);
