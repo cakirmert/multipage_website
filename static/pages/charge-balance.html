@@ -92,7 +92,7 @@ function compute() {
     $("results").innerHTML =
         `<span><b>Σ cations</b> = ${cationsEq.toFixed(5)} eq/kg</span>` +
         `<span><b>Σ anions</b>  = ${anionsEq.toFixed(5)} eq/kg</span>` +
-        `<span><b>Absolute CBE</b> = ${cbe.toFixed(5)} eq/kg</span>` +
+        `<span><b>&Delta;Q</b> = ${cbe.toFixed(5)} eq/kg</span>` +
         `<span><b>Relative CBE</b> = <span style="color:${Math.abs(cbeRel) > 5 ? '#dc2626' : '#149c7d'}">${cbeRel.toFixed(2)} %</span></span>`;
 
     $("verdict").textContent = Math.abs(cbeRel) > 5
